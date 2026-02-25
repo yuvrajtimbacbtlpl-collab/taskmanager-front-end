@@ -1,0 +1,249 @@
+/* ===============================
+   TOP HEADER / NAVBAR
+================================ */
+
+.topbar {
+  height: 64px;
+  background: #ffffff;
+  border-bottom: 1px solid #e6e9ef;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 28px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* Title */
+
+.topbar h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: 0.3px;
+}
+
+/* Right Section */
+
+.profile-area {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ===============================
+   PROJECT SELECT
+================================ */
+
+.profile-area select {
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.profile-area select:hover {
+  border-color: #cbd5e1;
+}
+
+.profile-area select:focus {
+  outline: none;
+  border-color: #6366f1;
+  background: #ffffff;
+}
+
+/* ===============================
+   USER BUTTON
+================================ */
+
+.topbar-profile-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.topbar-profile-btn:hover {
+  background: #f8fafc;
+}
+
+/* Avatar */
+
+.topbar-avatar-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Username */
+
+.topbar-username {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111827;
+}
+
+/* ===============================
+   LOGOUT BUTTON
+================================ */
+
+.logout {
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: none;
+  background: #fee2e2;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.logout:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.25);
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 768px) {
+  .topbar {
+    padding: 0 16px;
+  }
+
+  .topbar h1 {
+    font-size: 16px;
+  }
+
+  .profile-area select {
+    width: 140px;
+  }
+
+  .username {
+    display: none;
+  }
+}
+
+/* ===============================
+   USER WRAPPER
+================================ */
+
+.topbar-user-wrapper {
+  position: relative;
+}
+
+/* ===============================
+   DROPDOWN
+================================ */
+
+.topbar-dropdown {
+  position: absolute;
+  right: 0;
+  top: 48px;
+  width: 240px;
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+  padding: 10px;
+  z-index: 200;
+  animation: dropdownFade 0.18s ease;
+}
+
+@keyframes dropdownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* USER INFO */
+
+.dropdown-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px 10px;
+}
+
+.dropdown-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.dropdown-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.dropdown-email {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* DIVIDER */
+
+.dropdown-divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 6px 0;
+}
+
+/* ITEMS */
+
+.dropdown-item {
+
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.15s;
+  color: #111827;
+}
+
+.dropdown-item:hover {
+  background: #f3f4f6;
+}
+
+.dropdown-item.logout {
+  color: #ef4444;
+}
+
+.dropdown-item.logout:hover {
+  background: #eeb4b4;
+}

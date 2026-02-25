@@ -1,0 +1,156 @@
+:root {
+  --bg-overlay: rgba(15, 23, 42, 0.65);
+
+  --card-bg: rgba(255, 255, 255, 0.96);
+  --card-border: rgba(255, 255, 255, 0.4);
+
+  --primary: #4f46e5;   /* Indigo */
+  --primary-soft: #6366f1;
+
+  --text-main: #0f172a;
+  --text-muted: #6b7280;
+
+  --admin: #ef4444;
+  --staff: #3b82f6;
+
+  --shadow-strong: 0 30px 60px rgba(0, 0, 0, 0.35);
+}
+
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-overlay);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* Card */
+.profile-card.premium {
+  width: 420px;
+  border-radius: 22px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow-strong);
+  overflow: hidden;
+  position: relative;
+  animation: popIn 0.35s ease;
+}
+
+/* Soft glow edge */
+.profile-card.premium::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  background: linear-gradient(
+    135deg,
+    rgba(79, 70, 229, 0.25),
+    transparent 60%
+  );
+  pointer-events: none;
+}
+
+/* Close */
+.profile-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.7);
+  border: none;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+.profile-close:hover {
+  transform: scale(1.1);
+}
+
+/* Header */
+.profile-header {
+  background: linear-gradient(
+    135deg,
+    var(--primary),
+    var(--primary-soft)
+  );
+  padding: 30px 20px 24px;
+  text-align: center;
+  color: white;
+}
+
+.avatar {
+  width: 76px;
+  height: 76px;
+  background: white;
+  color: var(--primary);
+  font-size: 34px;
+  font-weight: 700;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}
+
+.profile-header h2 {
+  margin: 6px 0;
+  font-size: 21px;
+  letter-spacing: 0.3px;
+}
+
+/* Role badge */
+.role-badge {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  backdrop-filter: blur(4px);
+}
+
+.role-badge.admin {
+  background: rgba(239, 68, 68, 0.25);
+  color: #fee2e2;
+}
+
+.role-badge.staff {
+  background: rgba(59, 130, 246, 0.25);
+  color: #dbeafe;
+}
+
+/* Body */
+.profile-body {
+  padding: 24px;
+}
+
+.info-row span {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.info-row p {
+  margin-top: 6px;
+  font-weight: 600;
+  color: var(--text-main);
+  font-size: 15px;
+}
+
+/* Animation */
+@keyframes popIn {
+  from {
+    transform: translateY(25px) scale(0.94);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}

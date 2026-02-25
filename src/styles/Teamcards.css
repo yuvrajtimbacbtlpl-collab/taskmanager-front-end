@@ -1,0 +1,55 @@
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.simple-card {
+  width: 220px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  transition: 0.3s;
+}
+
+.simple-card:hover {
+  transform: translateY(-4px);
+}
+
+.avatar-circle {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  background: #4f46e5;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+}
+
+.simple-card h3 {
+  margin: 6px 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.simple-card .email {
+  font-size: 13px;
+  color: #666;
+}
+
+.role {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 12px;
+  font-size: 12px;
+  border-radius: 20px;
+  background: #eef2ff;
+  color: #4338ca;
+  font-weight: 500;
+}

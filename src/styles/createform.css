@@ -1,0 +1,295 @@
+/* ==========================
+   src/css/createform.css
+========================== */
+
+/* ==========================
+   PAGE WRAPPER
+========================== */
+.permission-page {
+  padding: 25px;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+/* ==========================
+   HEADER
+========================== */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.page-header h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.page-header .btn-primary {
+  background-color: #4f46e5; /* Indigo */
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.page-header .btn-primary:hover {
+  background-color: #4338ca;
+}
+
+/* ==========================
+   SUCCESS / INFO MESSAGE
+========================== */
+.success-banner,
+.info-msg {
+  background-color: #d1fae5;
+  color: #065f46;
+  padding: 12px 18px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+/* ==========================
+   FILTER BAR
+========================== */
+.filter-bar {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-bar input,
+.filter-bar select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.filter-bar input:focus,
+.filter-bar select:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+  outline: none;
+}
+
+/* ==========================
+   MODAL / OVERLAY
+========================== */
+.modal-overlay,
+.staff-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(31, 41, 55, 0.5);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; } 
+  to { opacity: 1; }
+}
+
+.modal-card,
+.staff-form-card {
+  width: 450px;
+  max-width: 95%;
+  background: #fff;
+  border-radius: 12px;
+  padding: 25px 30px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+  overflow-y: auto;
+  animation: popup 0.25s ease;
+}
+
+@keyframes popup {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ==========================
+   MODAL HEADER
+========================== */
+.modal-header,
+.staff-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 10px;
+}
+
+.modal-header h3,
+.staff-form-header h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.modal-close,
+.close-btn {
+  font-size: 20px;
+  font-weight: bold;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover,
+.close-btn:hover {
+  color: #111827;
+  transform: scale(1.1);
+}
+
+/* ==========================
+   FORM FIELDS
+========================== */
+.form-field,
+.field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+
+.form-field label,
+.field label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #374151;
+}
+
+.form-field input,
+.form-field select,
+.field input,
+.field select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.field input:focus,
+.field select:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
+}
+
+/* ==========================
+   BUTTONS
+========================== */
+.btn-primary,
+.btn-primary.full {
+  background-color: #4f46e5;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 10px 16px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover,
+.btn-primary.full:hover {
+  background-color: #4338ca;
+}
+
+.btn-primary.full {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ==========================
+   ICON BUTTONS
+========================== */
+.iconedit,
+.icondelete {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin-right: 5px;
+  transition: all 0.2s ease;
+}
+
+.iconedit {
+  color: #4f46e5;
+}
+
+.icondelete {
+  color: #dc2626;
+}
+
+.iconedit:hover {
+  opacity: 0.8;
+}
+
+.icondelete:hover {
+  opacity: 0.8;
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+@media (max-width: 768px) {
+  .modal-card,
+  .staff-form-card {
+    width: 95%;
+    padding: 20px;
+  }
+}
+
+
+.media-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.media-item {
+  position: relative;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: red;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  line-height: 18px;
+}
