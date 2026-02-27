@@ -7,39 +7,73 @@ import "../styles/topbar.css";
 export default function Header({ role, user, onLogout }) {
   const [showProfile, setShowProfile] = useState(false);
   const [projects, setProjects] = useState([]);
+
   const { selectedProject, setSelectedProject } = useProject();
 
   const [openMenu, setOpenMenu] = useState(false);
-  const menuRef = useRef();
+  const [openProject, setOpenProject] = useState(false);
+
+  const menuRef = useRef(null);
+  const projectRef = useRef(null);
+
+  /* ================= FETCH PROJECTS ================= */
 
   useEffect(() => {
     fetchProjects();
   }, []);
 
-  /* Close dropdown outside click */
+  const fetchProjects = async () => {
+    try {
+      const data = await api("/projects");
+
+      const list = Array.isArray(data) ? data : [];
+      setProjects(list);
+
+      if (!selectedProject && list.length > 0) {
+        setSelectedProject(list[0]);
+      }
+    } catch (err) {
+      console.error("Project fetch error", err);
+      setProjects([]);
+    }
+  };
+
+  /* ================= OUTSIDE CLICK CLOSE ================= */
+
   useEffect(() => {
-    const handler = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
+    const handleOutsideClick = (event) => {
+      const target = event.target;
+
+      if (
+        projectRef.current &&
+        !projectRef.current.contains(target)
+      ) {
+        setOpenProject(false);
+      }
+
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(target)
+      ) {
         setOpenMenu(false);
       }
     };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () =>
+      document.removeEventListener("mousedown", handleOutsideClick);
   }, []);
 
-  const fetchProjects = async () => {
-    const data = await api("/projects");
-    setProjects(data || []);
-    if (!selectedProject && data.length > 0) {
-      setSelectedProject(data[0]);
-    }
-  };
+  /* ================= LOGOUT ================= */
 
   const confirmLogout = () => {
     if (window.confirm("Are you sure you want to logout?")) {
       onLogout();
     }
   };
+
+  /* ================= ROLE / TITLE ================= */
 
   const roleName =
     (user?.role?.name || user?.role || role || "").toUpperCase();
@@ -51,8 +85,16 @@ export default function Header({ role, user, onLogout }) {
       ? "Staff Dashboard"
       : "Dashboard";
 
-  const initials =
-    user?.username?.charAt(0)?.toUpperCase() || "U";
+  /* ================= USER INITIAL ================= */
+
+  const initials = user?.username?.charAt(0)?.toUpperCase() || "U";
+
+  /* ================= PROJECT SELECT ================= */
+
+  const handleSelectProject = (project) => {
+    setSelectedProject(project);
+    // ❌ DO NOT CLOSE HERE
+  };
 
   return (
     <>
@@ -61,26 +103,122 @@ export default function Header({ role, user, onLogout }) {
 
         <div className="profile-area">
 
-          <select
-            value={selectedProject?._id || ""}
-            onChange={(e) =>
-              setSelectedProject(
-                projects.find((p) => p._id === e.target.value)
-              )
-            }
-          >
-            {projects.map((p) => (
-              <option key={p._id} value={p._id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
+          {/* ================= PROJECT DROPDOWN ================= */}
 
-          {/* PROFILE BUTTON */}
-          <div
-            className="topbar-user-wrapper"
-            ref={menuRef}
-          >
+          <div className="project-wrapper" ref={projectRef}>
+            <button
+              className="project-btn"
+              onClick={() => setOpenProject((prev) => !prev)}
+            >
+              <div className="project-btn-content">
+                <span className="project-label"><b>Project : </b></span>
+
+                <span className="project-btn-name">
+                  {selectedProject?.name || "Select Project"}
+                </span>
+              </div>
+
+              <span
+                className={`project-btn-arrow ${
+                  openProject ? "rotate" : ""
+                }`}
+              >
+                ▾
+              </span>
+            </button>
+
+            {openProject && (
+              <div
+                className="project-dropdown-menu"
+                onMouseDown={(e) => e.stopPropagation()}  // ⭐ MAIN FIX
+              >
+                {/* HEADER */}
+                <div className="project-dropdown-header">
+                  Your Projects
+                </div>
+
+                {/* LIST */}
+                <div className="project-dropdown-list">
+                  {projects.length === 0 && (
+                    <div className="project-empty">
+                      No projects found
+                    </div>
+                  )}
+
+                  {projects.map((p) => {
+                    const active = selectedProject?._id === p._id;
+
+                    return (
+                      <div
+                        key={p._id}
+                        className={`project-dropdown-item ${
+                          active ? "active" : ""
+                        }`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSelectProject(p);
+                        }}
+                      >
+                        <span>{p.name}</span>
+
+                        {active && (
+                          <span className="project-check">✓</span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* DETAILS PANEL */}
+                {selectedProject && (
+                  <>
+                    <div className="project-divider" />
+
+                    <div className="project-info-box">
+                      <div className="project-info-title">
+                        Project Details
+                      </div>
+
+                      <div className="project-info-row">
+                        <span>Name:</span>
+                        <b>{selectedProject?.name || "N/A"}</b>
+                      </div>
+
+                      <div className="project-info-row">
+                        <span>Created By:</span>
+                        <b>
+                          {selectedProject?.createdBy?.username ||
+                            "Unknown"}
+                        </b>
+                      </div>
+
+                      <div className="project-info-row">
+                        <span>Email:</span>
+                        <b>
+                          {selectedProject?.createdBy?.email || "N/A"}
+                        </b>
+                      </div>
+
+                      <div className="project-info-row">
+                        <span>Created:</span>
+                        <b>
+                          {selectedProject?.createdAt
+                            ? new Date(
+                                selectedProject.createdAt
+                              ).toLocaleString()
+                            : "N/A"}
+                        </b>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* ================= PROFILE ================= */}
+
+          <div className="topbar-user-wrapper" ref={menuRef}>
             <button
               className="topbar-profile-btn"
               onClick={() => setOpenMenu(!openMenu)}
@@ -95,8 +233,10 @@ export default function Header({ role, user, onLogout }) {
             </button>
 
             {openMenu && (
-              <div className="topbar-dropdown">
-
+              <div
+                className="topbar-dropdown"
+                onMouseDown={(e) => e.stopPropagation()}
+              >
                 <div className="dropdown-user">
                   <div className="dropdown-avatar">
                     {initials}
@@ -106,6 +246,7 @@ export default function Header({ role, user, onLogout }) {
                     <div className="dropdown-name">
                       {user?.username}
                     </div>
+
                     <div className="dropdown-email">
                       {user?.email}
                     </div>
@@ -130,13 +271,14 @@ export default function Header({ role, user, onLogout }) {
                 >
                   Logout
                 </div>
-
               </div>
             )}
           </div>
+
         </div>
       </div>
 
+      {/* PROFILE MODAL */}
       {showProfile && (
         <ProfileModal
           user={user}

@@ -32,30 +32,228 @@
   gap: 14px;
 }
 
+
+
 /* ===============================
-   PROJECT SELECT
+   PROJECT DROPDOWN PREMIUM
 ================================ */
 
-.profile-area select {
-  height: 38px;
-  padding: 0 12px;
-  border-radius: 8px;
+
+
+.project-wrapper {
+  position: relative;
+}
+
+/* ===============================
+   PROJECT BUTTON
+================================ */
+
+.project-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  padding: 0 24px;
+  border-radius: 12px;
   border: 1px solid #e5e7eb;
-  background: #f9fafb;
-  font-size: 14px;
-  color: #374151;
+  background: #ffffff;
   cursor: pointer;
+  min-width: 130px;
   transition: 0.2s;
 }
 
-.profile-area select:hover {
-  border-color: #cbd5e1;
+.project-btn:hover {
+  background: #f8fafc;
+  border-color: #d1d5db;
 }
 
-.profile-area select:focus {
-  outline: none;
-  border-color: #6366f1;
+.project-btn-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.project-btn-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111827;
+}
+
+/* Arrow */
+
+.project-btn-arrow {
+  font-size: 12px;
+  color: #6b7280;
+  transition: 0.25s;
+  margin-left: 10px;
+}
+
+.project-btn-arrow.rotate {
+  transform: rotate(180deg);
+}
+
+
+
+/* ===============================
+   DROPDOWN MENU
+================================ */
+
+
+.project-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);   /* perfect under button */
+  right: 0;                 /* ✅ OPEN LEFT SIDE */
+  left: auto;
+  width: 300px;
   background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 20px 45px rgba(0,0,0,0.12);
+  padding: 12px;
+  z-index: 500;
+
+  animation: dropdownFade 0.18s ease;
+}
+
+@keyframes dropdownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* ===============================
+   PROJECT INFO SECTION
+================================ */
+
+.project-divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 10px 0;
+}
+
+.project-info-box {
+  padding: 10px 6px 4px;
+}
+
+.project-info-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.project-info-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 4px;
+  color: #374151;
+}
+
+.project-info-row span {
+  color: #6b7280;
+}
+
+/* ===============================
+   PROJECT ACTIVE INDICATOR
+================================ */
+
+.project-dropdown-item.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 3px;
+  background: #4f46e5;
+}
+
+/* ===============================
+   SCROLLBAR PREMIUM
+================================ */
+
+.project-dropdown-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.project-dropdown-list::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+}
+
+.project-dropdown-list::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+
+/* ===============================
+   HEADER
+================================ */
+
+.project-dropdown-header {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  padding: 4px 6px 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ===============================
+   LIST
+================================ */
+
+.project-dropdown-list {
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+/* ===============================
+   ITEM
+================================ */
+
+.project-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+  padding: 9px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #111827;
+  transition: 0.15s;
+  position: relative;
+}
+
+.project-dropdown-item:hover {
+  background: #f3f4f6;
+}
+
+/* Active */
+
+.project-dropdown-item.active {
+  background: #eef2ff;
+  color: #4f46e5;
+  font-weight: 500;
+}
+
+/* Check Icon */
+
+.project-check {
+  margin-left: auto;
+  font-size: 13px;
+  color: #4f46e5;
+  font-weight: 600;
 }
 
 /* ===============================
@@ -238,9 +436,10 @@
 }
 
 .dropdown-item.logout {
+  margin-top: 5px;
   color: #ef4444;
 }
 
 .dropdown-item.logout:hover {
-  background: #eeb4b4;
+  background: #f79797a7;
 }

@@ -9,6 +9,7 @@ import {
   Shield,
   KeyRound,
   Settings,
+  AlertCircle, // ✅ add icon for issue
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -36,6 +37,7 @@ export default function Sidebar() {
           </NavLink>
         )}
 
+        {/* Projects */}
         {hasFeatureAccess("project") && (
           <NavLink to="/dashboard/projects" className={linkClass}>
             <ClipboardList size={18} className="icon" />
@@ -51,6 +53,23 @@ export default function Sidebar() {
           </NavLink>
         )}
 
+        {/* ✅ Issue */}
+        {hasFeatureAccess("issue") && (
+          <NavLink to="/dashboard/issues" className={linkClass}>
+            <AlertCircle size={18} className="icon" />
+            <span>Issues</span>
+          </NavLink>
+        )}
+
+        {/* Documents */}
+        {hasFeatureAccess("document") && (
+          <NavLink to="/dashboard/documents" className={linkClass}>
+            <ClipboardList size={18} className="icon" />
+            <span>Documents</span>
+          </NavLink>
+        )}
+
+        {/* Team */}
         {hasFeatureAccess("team") && (
           <NavLink to="/dashboard/team" className={linkClass}>
             <Users size={18} className="icon" />
@@ -74,8 +93,7 @@ export default function Sidebar() {
           </NavLink>
         )}
 
-        {/* Task-Status */}
-
+        {/* Task Status */}
         {hasFeatureAccess("taskStatus") && (
           <NavLink to="/dashboard/task-status" className={linkClass}>
             <ListChecks size={18} className="icon" />

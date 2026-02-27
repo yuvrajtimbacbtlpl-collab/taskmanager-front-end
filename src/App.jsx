@@ -1,7 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 
-
 import Login from "./pages/Login";
 import DashboardLayout from "./layouts/DashboardLayout";
 
@@ -16,8 +15,13 @@ import PermissionRoute from "./routes/PermissionRoute";
 import CreateRole from "./pages/dashboard/CreateRole";
 import TaskStatus from "./pages/dashboard/TaskStatus";
 import Loader from "./components/Loader";
-import Projects from "./pages/dashboard/Projects"
-import Team from "./pages/dashboard/Team"
+import Projects from "./pages/dashboard/Projects";
+import Team from "./pages/dashboard/Team";
+import ForgotPassword from "./pages/ForgotPassword";
+import IssueManagement from "./pages/dashboard/IssueManagement";
+
+// ✅ New import
+import Documents from "./pages/dashboard/Documents";
 
 export default function App() {
   const { user, loading } = useAuth();
@@ -29,6 +33,7 @@ export default function App() {
       </div>
     );
   }
+
   return (
     <Routes>
       {/* LOGIN */}
@@ -37,12 +42,15 @@ export default function App() {
         element={!user ? <Login /> : <Navigate to="/dashboard" />}
       />
 
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+
       {/* DASHBOARD */}
       <Route
         path="/dashboard"
         element={user ? <DashboardLayout /> : <Navigate to="/login" />}
       >
         <Route index element={<DashboardHome />} />
+
         {/* ================= STAFF ================= */}
         <Route
           path="create-staff"
@@ -60,7 +68,8 @@ export default function App() {
             </PermissionRoute>
           }
         />
-        {/* ================= Projects ================= */}{" "}
+
+        {/* ================= Projects ================= */}
         <Route
           path="projects"
           element={
@@ -69,6 +78,7 @@ export default function App() {
             </PermissionRoute>
           }
         />
+
         {/* ================= TASK ================= */}
         <Route
           path="task"
@@ -78,6 +88,17 @@ export default function App() {
             </PermissionRoute>
           }
         />
+
+        {/* ================= Issue ================= */}
+        <Route
+          path="issues"
+          element={
+            <PermissionRoute permission="issue.read">
+              <IssueManagement />
+            </PermissionRoute>
+          }
+        />
+
         {/* ================= Team ================= */}
         <Route
           path="team"
@@ -87,6 +108,7 @@ export default function App() {
             </PermissionRoute>
           }
         />
+
         {/* ================= ROLES ================= */}
         <Route
           path="roles"
@@ -112,6 +134,7 @@ export default function App() {
             </PermissionRoute>
           }
         />
+
         {/* ================= PERMISSIONS ================= */}
         <Route
           path="permissions"
@@ -121,6 +144,7 @@ export default function App() {
             </PermissionRoute>
           }
         />
+
         {/* ================= Task-Status ================= */}
         <Route
           path="task-status"
@@ -130,7 +154,16 @@ export default function App() {
             </PermissionRoute>
           }
         />
-        {/* ================= SETTINGS ================= */}
+
+        {/* ================= DOCUMENTS ================= */}
+        <Route
+          path="documents"
+          element={
+            <PermissionRoute permission="document.read">
+              <Documents />
+            </PermissionRoute>
+          }
+        />
       </Route>
 
       {/* FALLBACK */}

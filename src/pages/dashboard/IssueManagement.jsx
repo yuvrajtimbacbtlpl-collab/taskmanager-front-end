@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { api } from "../../api";
 import CommonTable from "../../components/CommonTable";
 import { useAuth } from "../../context/AuthContext";
-import { useProject } from "../../context/ProjectContext"; // ✅ project context
+import { useProject } from "../../context/ProjectContext";
 import socket from "../../socket";
 import { Pencil, Trash2, Eye } from "lucide-react";
 import TableSkeleton from "../../components/TableSkeleton";
@@ -11,16 +11,16 @@ import ConfirmDelete from "../../components/ConfirmDelete";
 
 const BASE_URL = "http://localhost:4000";
 
-export default function CreateTask() {
+export default function CreateIssue() {
   const { user, hasPermission } = useAuth();
-  const { selectedProject } = useProject(); // ✅ get selected project
+  const { selectedProject } = useProject();
 
-  const canCreate = hasPermission("task.create");
-  const canUpdate = hasPermission("task.update");
-  const canDelete = hasPermission("task.delete");
-  const canRead = hasPermission("task.read");
+  const canCreate = hasPermission("issue.create");
+  const canUpdate = hasPermission("issue.update");
+  const canDelete = hasPermission("issue.delete");
+  const canRead = hasPermission("issue.read");
 
-  const [tasks, setTasks] = useState([]);
+  const [issues, setIssues] = useState([]);
   const [staff, setStaff] = useState([]);
   const [statuses, setStatuses] = useState([]);
 
@@ -31,7 +31,7 @@ export default function CreateTask() {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [message, setMessage] = useState(null);
-  const [viewTask, setViewTask] = useState(null);
+  const [viewIssue, setViewIssue] = useState(null);
 
   const [form, setForm] = useState({
     title: "",
@@ -45,42 +45,45 @@ export default function CreateTask() {
   const [deleteId, setDeleteId] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
-  /* ================= SOCKET JOIN ================= */
+  /* ================= SOCKET ================= */
+
   useEffect(() => {
     if (user?._id) socket.emit("join", user._id);
   }, [user]);
 
-  /* ================= FETCH ================= */
   useEffect(() => {
     if (canRead && selectedProject) {
-      fetchTasks();
+      fetchIssues();
       fetchStaff();
       fetchStatuses();
     } else {
-      setTasks([]); // clear tasks if no project selected
+      setIssues([]);
     }
-  }, [canRead, selectedProject]); // ✅ re-fetch when selectedProject changes
+  }, [canRead, selectedProject]);
 
   useEffect(() => {
-    socket.on("taskCreated", fetchTasks);
-    socket.on("taskUpdated", fetchTasks);
-    socket.on("taskDeleted", fetchTasks);
-    socket.on("staffUpdated", fetchStaff);
+    socket.on("taskCreated", fetchIssues);
+    socket.on("taskUpdated", fetchIssues);
+    socket.on("taskDeleted", fetchIssues);
 
     return () => {
       socket.off("taskCreated");
       socket.off("taskUpdated");
       socket.off("taskDeleted");
-      socket.off("staffUpdated");
     };
   }, []);
 
-  const fetchTasks = async () => {
-    if (!selectedProject) return setTasks([]);
+  /* ================= FETCH ================= */
+
+  const fetchIssues = async () => {
+    if (!selectedProject) return setIssues([]);
+
     try {
       setLoading(true);
-      const data = await api(`/tasks?project=${selectedProject._id}`);
-      setTasks(data || []);
+      const data = await api(
+        `/tasks?project=${selectedProject._id}&type=issue`,
+      );
+      setIssues(data || []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -99,15 +102,21 @@ export default function CreateTask() {
     setStatuses(data || []);
   };
 
-  const filteredTasks = tasks.filter((task) => {
+  /* ================= FILTER ================= */
+
+  const filteredIssues = issues.filter((item) => {
     const matchesSearch =
-      task.title?.toLowerCase().includes(search.toLowerCase()) ||
-      task.description?.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus = !selectedStatus || task.status === selectedStatus;
+      item.title?.toLowerCase().includes(search.toLowerCase()) ||
+      item.description?.toLowerCase().includes(search.toLowerCase());
+
+    const matchesStatus = !selectedStatus || item.status === selectedStatus;
     const matchesStaff =
-      !selectedStaff || task.assignedTo?._id === selectedStaff;
+      !selectedStaff || item.assignedTo?._id === selectedStaff;
+
     return matchesSearch && matchesStatus && matchesStaff;
   });
+
+  /* ================= FORM ================= */
 
   const resetForm = () => {
     setForm({
@@ -121,18 +130,23 @@ export default function CreateTask() {
     setShowForm(false);
   };
 
+  const showToast = (data) => {
+    setMessage(data);
+    setTimeout(() => setMessage(null), 4000);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       const formData = new FormData();
+
       formData.append("title", form.title);
       formData.append("description", form.description);
       formData.append("assignedTo", form.assignedTo);
       formData.append("status", form.status);
-      formData.append("priority", form.priority || "Normal");
+      formData.append("type", "issue");
 
-      if (form.dueDate) formData.append("dueDate", form.dueDate);
       if (selectedProject) formData.append("project", selectedProject._id);
 
       form.media.forEach((file) => {
@@ -151,74 +165,74 @@ export default function CreateTask() {
         });
       }
 
-      setMessage({
+      showToast({
         type: editingId ? "toast-warning" : "toast-success",
-        title: editingId ? "Task Updated" : "Task Created",
+        title: editingId ? "Issue Updated" : "Issue Created",
         text: editingId
-          ? "Your task has been updated successfully."
-          : "New task has been created successfully.",
-        icon: editingId ? "✏️" : "✅",
+          ? "Issue updated successfully."
+          : "New issue created successfully.",
+        icon: editingId ? "✏️" : "🐞",
       });
 
-      setTimeout(() => setMessage(null), 4000);
-
       resetForm();
-      fetchTasks();
+      fetchIssues();
     } catch (err) {
       console.error(err);
     }
   };
 
-  const handleEdit = (task) => {
-    setViewTask(null);
+  const handleEdit = (item) => {
     setForm({
-      title: task.title || "",
-      description: task.description || "",
-      assignedTo: task.assignedTo?._id || "",
-      status: task.status || "",
-      media: task.media || [],
+      title: item.title || "",
+      description: item.description || "",
+      assignedTo: item.assignedTo?._id || "",
+      status: item.status || "",
+      media: item.media || [],
     });
-    setEditingId(task._id);
-    setShowForm(true);
-  };
 
-  const handleDelete = (id) => {
-    setDeleteId(id);
+    setEditingId(item._id);
+    setShowForm(true);
   };
 
   const confirmDelete = async () => {
     try {
       setDeleting(true);
-
       await api(`/tasks/${deleteId}`, { method: "DELETE" });
 
-      setMessage({
+      showToast({
         type: "toast-error",
-        title: "Task Deleted",
-        text: "The task has been removed successfully.",
+        title: "Issue Deleted",
+        text: "Issue removed successfully.",
         icon: "🗑️",
       });
 
-      fetchTasks();
-    } catch (err) {
-      console.error(err);
+      fetchIssues();
     } finally {
       setDeleting(false);
       setDeleteId(null);
     }
   };
 
-  const updateTaskInline = async (row, updates) => {
+  const updateInline = async (row, updates) => {
     const formData = new FormData();
+
     formData.append("title", row.title);
     formData.append("description", row.description);
     formData.append("assignedTo", updates.assignedTo || row.assignedTo?._id);
     formData.append("status", updates.status || row.status);
-    if (selectedProject) formData.append("project", selectedProject._id); // ✅ attach project
+    formData.append("type", "issue");
 
-    await api(`/tasks/${row._id}`, { method: "PUT", body: formData });
-    fetchTasks();
+    if (selectedProject) formData.append("project", selectedProject._id);
+
+    await api(`/tasks/${row._id}`, {
+      method: "PUT",
+      body: formData,
+    });
+
+    fetchIssues();
   };
+
+  /* ================= TABLE ================= */
 
   const columns = [
     { header: "Title", accessor: "title" },
@@ -229,7 +243,7 @@ export default function CreateTask() {
           className="table-select"
           value={row.status}
           onClick={(e) => e.stopPropagation()}
-          onChange={(e) => updateTaskInline(row, { status: e.target.value })}
+          onChange={(e) => updateInline(row, { status: e.target.value })}
         >
           {statuses.map((s) => (
             <option key={s._id} value={s.name}>
@@ -246,9 +260,7 @@ export default function CreateTask() {
           className="table-select"
           value={row.assignedTo?._id || ""}
           onClick={(e) => e.stopPropagation()}
-          onChange={(e) =>
-            updateTaskInline(row, { assignedTo: e.target.value })
-          }
+          onChange={(e) => updateInline(row, { assignedTo: e.target.value })}
         >
           <option value="">Select User</option>
           {staff.map((s) => (
@@ -276,22 +288,24 @@ export default function CreateTask() {
                 <Pencil size={18} />
               </button>
             )}
+
             {canDelete && (
               <button
                 className="icondelete"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleDelete(row._id);
+                  setDeleteId(row._id);
                 }}
               >
                 <Trash2 size={18} />
               </button>
             )}
+
             <button
               className="iconview"
               onClick={(e) => {
                 e.stopPropagation();
-                setViewTask(row);
+                setViewIssue(row);
               }}
             >
               <Eye size={18} />
@@ -303,27 +317,13 @@ export default function CreateTask() {
   if (!canRead)
     return (
       <div className="permission-page">
-        <h3>No Permission to view tasks</h3>
+        <h3>No Permission to view issues</h3>
       </div>
     );
 
   return (
     <div className="permission-page">
-      <div className="page-header">
-        <h2>Task Management</h2>
-        {canCreate && (
-          <button
-            className="btn-primary"
-            onClick={() => {
-              setShowForm(true);
-              setEditingId(null);
-            }}
-          >
-            + Create Task
-          </button>
-        )}
-      </div>
-
+      {/* ✅ TOAST MESSAGE */}
       {message && (
         <div className={`toast-card ${message.type}`}>
           <div className="toast-content">
@@ -339,6 +339,24 @@ export default function CreateTask() {
         </div>
       )}
 
+      {/* HEADER */}
+      <div className="page-header">
+        <h2>Issue Management</h2>
+
+        {canCreate && (
+          <button
+            type="button"
+            className="btn-primary"
+            onClick={() => {
+              setEditingId(null);
+              setShowForm(true);
+            }}
+          >
+            + Create Issue
+          </button>
+        )}
+      </div>
+
       {/* FILTER BAR */}
       <div className="filter-bar">
         <div className="filter-left">
@@ -349,6 +367,7 @@ export default function CreateTask() {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
+
         <div className="filter-right-group">
           <select
             value={selectedStatus}
@@ -361,6 +380,7 @@ export default function CreateTask() {
               </option>
             ))}
           </select>
+
           <select
             value={selectedStaff}
             onChange={(e) => setSelectedStaff(e.target.value)}
@@ -375,36 +395,47 @@ export default function CreateTask() {
         </div>
       </div>
 
+      {/* TABLE */}
       {loading ? (
         <TableSkeleton columns={3} rows={6} />
       ) : (
-        <CommonTable columns={columns} data={filteredTasks} actions={actions} />
+        <CommonTable
+          columns={columns}
+          data={filteredIssues}
+          actions={actions}
+        />
       )}
 
-      {/* VIEW MODAL */}
-      {viewTask && (
+      {/* VIEW ISSUE MODAL */}
+      {viewIssue && (
         <div className="staff-overlay">
           <div className="staff-form-card">
             <div className="staff-form-header">
-              <h3>Task Details</h3>
-              <span className="close-btn" onClick={() => setViewTask(null)}>
+              <h3>Issue Details</h3>
+              <span className="close-btn" onClick={() => setViewIssue(null)}>
                 ✕
               </span>
             </div>
+
             <div className="task-details">
               <p>
-                <strong>Title:</strong> {viewTask.title}
+                <strong>Title:</strong> {viewIssue.title}
               </p>
+
               <p>
-                <strong>Description:</strong> {viewTask.description}
+                <strong>Description:</strong> {viewIssue.description}
               </p>
+
               <p>
-                <strong>Status:</strong> {viewTask.status}
+                <strong>Status:</strong> {viewIssue.status}
               </p>
+
               <p>
-                <strong>Assigned To:</strong> {viewTask.assignedTo?.username}
+                <strong>Assigned To:</strong>{" "}
+                {viewIssue.assignedTo?.username || "-"}
               </p>
-              {viewTask.media && viewTask.media.length > 0 && (
+
+              {viewIssue.media && viewIssue.media.length > 0 && (
                 <div
                   style={{
                     marginTop: 15,
@@ -413,7 +444,7 @@ export default function CreateTask() {
                     flexWrap: "wrap",
                   }}
                 >
-                  {viewTask.media.map((file, index) => (
+                  {viewIssue.media.map((file, index) => (
                     <div key={index}>
                       {file.match(/\.(mp4|mov|webm)$/i) ? (
                         <video
@@ -425,7 +456,7 @@ export default function CreateTask() {
                         <img
                           src={`${BASE_URL}/uploads/${file}`}
                           width="250"
-                          alt="task"
+                          alt="issue"
                           style={{ borderRadius: 6 }}
                         />
                       )}
@@ -443,11 +474,12 @@ export default function CreateTask() {
         <div className="staff-overlay">
           <div className="staff-form-card">
             <div className="staff-form-header">
-              <h3>{editingId ? "Edit Task" : "Create Task"}</h3>
+              <h3>{editingId ? "Edit Issue" : "Create Issue"}</h3>
               <span className="close-btn" onClick={resetForm}>
                 ✕
               </span>
             </div>
+
             <form onSubmit={handleSubmit}>
               {/* TITLE */}
               <div className="field">
@@ -458,6 +490,7 @@ export default function CreateTask() {
                   required
                 />
               </div>
+
               {/* DESCRIPTION */}
               <div className="field">
                 <label>Description</label>
@@ -469,6 +502,7 @@ export default function CreateTask() {
                   }
                 />
               </div>
+
               {/* ASSIGNED */}
               <div className="field">
                 <label>Assign To</label>
@@ -487,6 +521,7 @@ export default function CreateTask() {
                   ))}
                 </select>
               </div>
+
               {/* STATUS */}
               <div className="field">
                 <label>Status</label>
@@ -503,6 +538,7 @@ export default function CreateTask() {
                   ))}
                 </select>
               </div>
+
               {/* MEDIA */}
               <div className="field">
                 <label>Upload Images / Videos</label>
@@ -517,15 +553,18 @@ export default function CreateTask() {
                     });
                   }}
                 />
+
                 <div className="media-preview">
                   {(form.media || []).map((file, index) => {
                     const url =
                       file instanceof File
                         ? URL.createObjectURL(file)
                         : `${BASE_URL}/uploads/${file}`;
+
                     const isVideo = (file.name || file).match(
                       /\.(mp4|mov|webm)$/i,
                     );
+
                     return (
                       <div key={index} className="media-item">
                         {isVideo ? (
@@ -533,6 +572,7 @@ export default function CreateTask() {
                         ) : (
                           <img src={url} alt="preview" width="150" />
                         )}
+
                         <button
                           type="button"
                           className="remove-btn"
@@ -549,17 +589,20 @@ export default function CreateTask() {
                   })}
                 </div>
               </div>
+
               <button className="btn-primary full">
-                {editingId ? "Update Task" : "Create Task"}
+                {editingId ? "Update Issue" : "Create Issue"}
               </button>
             </form>
           </div>
         </div>
       )}
+
+      {/* DELETE */}
       {deleteId && (
         <ConfirmDelete
-          title="Delete Task"
-          message="This task will be permanently removed. This action cannot be undone."
+          title="Delete Issue"
+          message="This issue will be permanently removed."
           loading={deleting}
           onCancel={() => setDeleteId(null)}
           onConfirm={confirmDelete}

@@ -50,3 +50,10 @@ export async function api(path, options = {}) {
 
   return data;
 }
+
+// ✅ Add Axios-like helpers
+api.get = (path, options = {}) => api(path, { ...options, method: "GET" });
+api.post = (path, body, options = {}) => api(path, { ...options, method: "POST", body });
+api.put = (path, body, options = {}) => api(path, { ...options, method: "PUT", body });
+api.delete = (path, options = {}) => api(path, { ...options, method: "DELETE" });
+
