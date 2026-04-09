@@ -319,7 +319,7 @@ export default function Header({ role, user, onLogout }) {
         </div>
       </div>
 
-      {showProfile && <ProfileModal user={user} role={roleName} onClose={() => setShowProfile(false)} />}
+      {showProfile && <ProfileModal onClose={() => setShowProfile(false)} />}
       {showLogoutConfirm && (
         <ConfirmDelete
           title="Logout?"

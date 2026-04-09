@@ -291,7 +291,7 @@ export default function CreateTask() {
       fd.append("type","task"); fd.append("project",selectedProject._id);
       fd.append("company",companyId); fd.append("appLink",window.location.href);
       await api(`/tasks/${row._id}`,{method:"PUT",body:fd});
-      showToast(updates.status&&!updates.assignedTo?"✓ Status updated":updates.assignedTo&&!updates.status?"✓ Assignee updated":"✓ Task updated","success");
+      showToast(updates.status&&!updates.assignedTo?"Status updated":updates.assignedTo&&!updates.status?"Assignee updated":"Task updated","update");
       fetchTasks();
     } catch (err) { fetchTasks(); showToast(err.message||"Failed to update","error"); }
   };
@@ -315,10 +315,10 @@ export default function CreateTask() {
       };
       if (editingId) {
         await taskService.updateTask(editingId, taskData);
-        showToast("✓ Task updated","success");
+        showToast("Task updated","update");
       } else {
         await taskService.createTask(taskData);
-        showToast("✓ Task created","success");
+        showToast("Task created","success");
       }
       resetForm(); fetchTasks();
     } catch (err) { showToast(err.message||"Operation failed","error"); }
@@ -334,7 +334,7 @@ export default function CreateTask() {
     try {
       setDeleting(true);
       await api(`/tasks/${deleteId}`,{method:"DELETE"});
-      setDeleteId(null); showToast("✓ Task deleted","success"); fetchTasks();
+      setDeleteId(null); showToast("Task deleted","delete"); fetchTasks();
     } catch (err) { showToast(err.message||"Failed to delete","error"); }
     finally { setDeleting(false); }
   };

@@ -159,7 +159,7 @@ export default function Roles() {
             try {
               setDeleteLoading(true);
               await api(`/roles/${deleteId}`, { method: "DELETE" });
-              showToast(`"${deleteName}" deleted`, "success");
+              showToast(`"${deleteName}" deleted`, "delete");
               setDeleteId(null);
               fetchRoles();
             } catch { showToast("Failed to delete", "error"); }

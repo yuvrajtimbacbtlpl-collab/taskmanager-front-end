@@ -118,7 +118,7 @@ export default function TaskStatus() {
     try {
       setDeleteLoading(true);
       await api(`/task-status/${deleteId}`, { method: "DELETE" });
-      showToast(`"${deleteName}" status deleted`, "error");
+      showToast(`"${deleteName}" status deleted`, "delete");
       setDeleteId(null);
       fetchData();
     } catch {

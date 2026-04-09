@@ -220,7 +220,7 @@ export default function CreateStaff() {
 
       {deleteId && (
         <DeleteConfirmPopup
-          onConfirm={async () => { await api(`/auth/staff/${deleteId}`, { method: "DELETE" }); setDeleteId(null); showToast("Staff deleted", "success"); fetchStaff(selectedRole, search, currentPage, limit); }}
+          onConfirm={async () => { await api(`/auth/staff/${deleteId}`, { method: "DELETE" }); setDeleteId(null); showToast("Staff deleted", "delete"); fetchStaff(selectedRole, search, currentPage, limit); }}
           onCancel={() => setDeleteId(null)}
         />
       )}

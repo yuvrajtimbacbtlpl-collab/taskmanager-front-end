@@ -34,11 +34,21 @@ export const AuthProvider = ({ children }) => {
       const perms = normalizePermissions(roleData?.permissions || []);
 
       setUser({
-        _id: data._id,
-        username: data.username,
-        email: data.email,
-        role: roleName,
-        company: data.company, // ✅ STORE COMPANY ID
+        _id:        data._id,
+        username:   data.username,
+        email:      data.email,
+        image:      data.image || "",
+        phone:      data.phone || "",
+        bio:        data.bio || "",
+        jobTitle:   data.jobTitle || "",
+        department: data.department || "",
+        location:   data.location || "",
+        website:    data.website || "",
+        linkedin:   data.linkedin || "",
+        twitter:    data.twitter || "",
+        role:       roleName,
+        company:    data.company,
+        createdAt:  data.createdAt,
       });
 
       // ✅ SET COMPANY DATA
@@ -97,11 +107,21 @@ export const AuthProvider = ({ children }) => {
     const perms = normalizePermissions(roleData?.permissions || []);
 
     setUser({
-      _id: data._id,
-      username: data.username,
-      email: data.email,
-      role: roleName,
-      company: data.company, // ✅ STORE COMPANY ID
+      _id:        data._id,
+      username:   data.username,
+      email:      data.email,
+      image:      data.image || "",
+      phone:      data.phone || "",
+      bio:        data.bio || "",
+      jobTitle:   data.jobTitle || "",
+      department: data.department || "",
+      location:   data.location || "",
+      website:    data.website || "",
+      linkedin:   data.linkedin || "",
+      twitter:    data.twitter || "",
+      role:       roleName,
+      company:    data.company,
+      createdAt:  data.createdAt,
     });
 
     // ✅ SET COMPANY DATA
@@ -147,6 +167,11 @@ export const AuthProvider = ({ children }) => {
     return permissions.some((perm) => perm.startsWith(`${feature}.`));
   };
 
+  /* ================= UPDATE USER ================= */
+  const updateUser = (updates) => {
+    setUser((prev) => prev ? { ...prev, ...updates } : prev);
+  };
+
   /* ================= AUTHENTICATION HELPER ================= */
   const isAuthenticated = () => !!user;
 
@@ -166,7 +191,8 @@ export const AuthProvider = ({ children }) => {
         hasPermission,
         hasFeatureAccess,
         isAuthenticated,
-        getCurrentCompanyId, // ✅ NEW HELPER
+        getCurrentCompanyId,
+        updateUser,  // ✅ update local user state after profile save
       }}
     >
       {children}

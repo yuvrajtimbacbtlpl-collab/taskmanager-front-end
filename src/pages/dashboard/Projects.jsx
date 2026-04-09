@@ -157,7 +157,7 @@ export default function Projects() {
     try {
       setDeleteLoading(true);
       await api(`/projects/${deleteId}`, { method: "DELETE" });
-      showToast(`"${deleteName}" deleted`, "success");
+      showToast(`"${deleteName}" deleted`, "delete");
       setDeleteId(null);
       fetchProjects(search, selectedType, currentPage, limit);
     } catch (err) {

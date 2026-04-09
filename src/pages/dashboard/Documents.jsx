@@ -402,7 +402,7 @@ export default function Documents() {
     if (!window.confirm(`Delete ${title}?`)) return;
     try {
       await api(`/documents/${id}`, { method: "DELETE" });
-      showToast("✓ Document deleted", "success");
+      showToast("Document deleted", "delete");
       fetchDocuments(search, fileTypeFilter);
     } catch {
       showToast("Error deleting document", "error");

@@ -97,7 +97,7 @@ export default function PermissionManagement() {
     try {
       setDeleteLoading(true);
       await api(`/permissions/${deleteId}`, { method: "DELETE" });
-      showToast(`"${deleteName}" permission deleted`, "error");
+      showToast(`"${deleteName}" permission deleted`, "delete");
       setDeleteId(null);
       fetchPermissions();
     } catch {
