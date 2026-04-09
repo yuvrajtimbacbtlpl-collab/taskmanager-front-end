@@ -1,0 +1,569 @@
+:root {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --error: #ef4444;
+  --glass: rgba(255, 255, 255, 0.95);
+}
+
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-gradient);
+  font-family: 'Inter', sans-serif;
+  padding: 20px;
+}
+
+.auth-card {
+  background: var(--glass);
+  width: 100%;
+  max-width: 450px;
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+/* For wider registration form */
+.auth-card.wide {
+  max-width: 800px;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.auth-header h2 {
+  color: var(--text-main);
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.auth-header p {
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+.form-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 600px) {
+  .grid-2 { grid-template-columns: 1fr; }
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.input-group input, .input-group textarea {
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #fcfdfe;
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+  background: #fff;
+}
+
+.btn-primaryy {
+  background: var(--primary);
+  color: white;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-primaryy:hover {
+  background: var(--primary-hover);
+}
+
+.btn-primaryy:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+.btn-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.auth-footer {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.auth-footer a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.error-msg {
+  color: var(--error);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.server-error-box {
+  background: #fef2f2;
+  color: var(--error);
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 20px;
+  border: 1px solid #fee2e2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.error-icon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+
+.pass-strength {
+  height: 4px;
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.pass-strength div {
+  flex: 1;
+  height: 100%;
+  border-radius: 10px;
+  background: #e2e8f0;
+  transition: background 0.3s;
+}
+
+.pass-strength .active { background: #22c55e; }
+
+/* ================================================================
+   Extended Login.css – Forgot Password + show/hide + spinner
+   ================================================================ */
+
+/* ─── Brand logo row ─── */
+.auth-brand {
+  display: flex; align-items: center; gap: 10px;
+  justify-content: center; margin-bottom: 28px;
+}
+.auth-brand-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 12px rgba(79,70,229,0.3);
+}
+.auth-brand-name {
+  font-size: 16px; font-weight: 800; color: #0f172a; letter-spacing: -0.3px;
+}
+
+/* ─── Label row with forgot link ─── */
+.label-row {
+  display: flex; justify-content: space-between; align-items: center;
+}
+.label-row label { margin-bottom: 0; }
+.forgot-link {
+  font-size: 12.5px; font-weight: 600; color: #4f46e5;
+  text-decoration: none; transition: color 0.15s;
+}
+.forgot-link:hover { color: #4338ca; text-decoration: underline; }
+
+/* ─── Password input wrapper ─── */
+.pass-input-wrap { 
+  position: relative; 
+}
+.pass-input-wrap input { 
+  width: 100%; 
+  padding-right: 44px; 
+  box-sizing: border-box; 
+}
+.pass-toggle {
+  position: absolute; 
+  right: 13px; 
+  top: 50%; 
+  transform: translateY(-50%);
+  background: none; 
+  border: none; 
+  cursor: pointer; 
+  font-size: 16px;
+  line-height: 1; 
+  padding: 4px; 
+  color: #94a3b8; 
+  transition: color 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pass-toggle:hover { 
+  color: #475569; 
+}
+.pass-toggle-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* ─── Sign-in button loading state ─── */
+.btn-loading { 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 9px; 
+}
+.btn-spinner {
+  width: 15px; 
+  height: 15px;
+  border: 2.5px solid rgba(255,255,255,0.35);
+  border-top-color: #fff; 
+  border-radius: 50%;
+  animation: loginSpin 0.65s linear infinite; 
+  display: inline-block; 
+  flex-shrink: 0;
+}
+@keyframes loginSpin { 
+  to { transform: rotate(360deg); } 
+}
+
+/* ================================================================
+   FORGOT PASSWORD PAGE EXTRAS
+   ================================================================ */
+
+.fp-card { 
+  max-width: 480px; 
+}
+
+/* ─── Step progress bar ─── */
+.fp-progress {
+  display: flex; 
+  align-items: flex-start; 
+  justify-content: center;
+  gap: 0; 
+  margin-bottom: 48px; 
+  position: relative;
+}
+
+.fp-step-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex: 1;
+  max-width: 100px;
+}
+
+.fp-step {
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.fp-step-dot {
+  width: 40px; 
+  height: 40px; 
+  border-radius: 50%;
+  background: #f1f5f9; 
+  color: #94a3b8;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  font-size: 14px; 
+  font-weight: 700; 
+  border: 2px solid #e2e8f0;
+  transition: all 0.25s; 
+  z-index: 1; 
+  flex-shrink: 0;
+}
+
+.fp-step.active .fp-step-dot {
+  background: #4f46e5; 
+  color: #fff; 
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 4px rgba(79,70,229,0.15);
+}
+
+.fp-step.done .fp-step-dot {
+  background: #16a34a; 
+  color: #fff; 
+  border-color: #16a34a;
+}
+
+.fp-step-label {
+  font-size: 12px; 
+  font-weight: 600; 
+  color: #94a3b8;
+  text-align: center;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.fp-step.active .fp-step-label { 
+  color: #4f46e5; 
+}
+
+.fp-step.done .fp-step-label { 
+  color: #16a34a; 
+}
+
+.fp-step-line {
+  position: absolute;
+  height: 2px; 
+  background: #e2e8f0; 
+  transition: background 0.25s;
+  top: 20px;
+  left: 100%;
+  width: 60px;
+}
+
+.fp-step-line.done { 
+  background: #16a34a; 
+}
+
+.fp-step-container:last-child .fp-step-line {
+  display: none;
+}
+
+/* ─── Info message (OTP sent) ─── */
+.fp-info-msg {
+  background: #eff6ff; 
+  border: 1px solid #bfdbfe;
+  border-radius: 9px; 
+  padding: 11px 14px;
+  font-size: 13px; 
+  color: #1d4ed8; 
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* ─── OTP input boxes ─── */
+.otp-boxes {
+  display: flex; 
+  gap: 10px; 
+  justify-content: center; 
+  margin-top: 4px;
+}
+
+.otp-box {
+  width: 48px; 
+  height: 56px;
+  text-align: center; 
+  font-size: 22px; 
+  font-weight: 800;
+  border-radius: 12px; 
+  border: 2px solid #e2e8f0;
+  background: #f8fafc; 
+  color: #0f172a;
+  transition: all 0.18s; 
+  caret-color: #4f46e5;
+  outline: none; 
+  font-family: inherit;
+}
+
+.otp-box:focus {
+  border-color: #4f46e5; 
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(79,70,229,0.12);
+}
+
+.otp-box.filled { 
+  background: #eef2ff; 
+  border-color: #a5b4fc; 
+  color: #4f46e5; 
+}
+
+/* Resend row */
+.otp-resend-row { 
+  display: flex; 
+  justify-content: center; 
+  margin-top: 14px; 
+}
+
+.otp-timer { 
+  font-size: 12.5px; 
+  color: #94a3b8; 
+  font-weight: 500; 
+}
+
+.otp-resend-btn {
+  background: none; 
+  border: none; 
+  cursor: pointer;
+  font-size: 12.5px; 
+  font-weight: 600; 
+  color: #4f46e5;
+  text-decoration: underline; 
+  font-family: inherit;
+  padding: 0; 
+  transition: color 0.15s;
+}
+
+.otp-resend-btn:hover { 
+  color: #4338ca; 
+}
+
+.otp-resend-btn:disabled { 
+  opacity: 0.5; 
+  cursor: not-allowed; 
+}
+
+/* ─── Strength meter ─── */
+.fp-strength-wrap {
+  display: flex; 
+  align-items: center; 
+  gap: 10px; 
+  margin-top: 6px;
+}
+
+.fp-strength-label { 
+  font-size: 12px; 
+  font-weight: 700; 
+  min-width: 46px; 
+}
+
+.fp-hint {
+  font-size: 11.5px; 
+  color: #94a3b8; 
+  margin: 6px 0 0;
+  line-height: 1.5;
+}
+
+/* ─── Action buttons row ─── */
+.fp-actions {
+  display: flex; 
+  gap: 10px; 
+  margin-top: 24px;
+}
+
+.fp-primary-btn { 
+  flex: 1; 
+}
+
+.fp-back-btn {
+  padding: 14px 18px; 
+  border-radius: 12px;
+  background: #f1f5f9; 
+  color: #475569;
+  border: 1.5px solid #e2e8f0; 
+  font-size: 14px; 
+  font-weight: 600;
+  cursor: pointer; 
+  transition: all 0.15s; 
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.fp-back-btn:hover { 
+  background: #e2e8f0; 
+}
+
+.fp-back-btn:disabled { 
+  opacity: 0.5; 
+  cursor: not-allowed; 
+}
+
+/* ─── Success screen ─── */
+.fp-success {
+  text-align: center; 
+  padding: 20px 0 10px;
+}
+
+.fp-success-icon {
+  margin-bottom: 18px;
+  display: flex;
+  justify-content: center;
+  color: #16a34a;
+}
+
+.fp-success-check {
+  animation: successPop 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+@keyframes successPop { 
+  from { transform: scale(0); opacity:0; } 
+  to { transform: scale(1); opacity:1; } 
+}
+
+.fp-success h2 { 
+  font-size: 24px; 
+  font-weight: 800; 
+  color: #0f172a; 
+  margin: 0 0 10px; 
+}
+
+.fp-success p { 
+  font-size: 14.5px; 
+  color: #64748b; 
+  line-height: 1.6; 
+  margin: 0 0 24px; 
+}
+
+.fp-success-bar {
+  width: 100%; 
+  height: 4px; 
+  background: #e2e8f0;
+  border-radius: 99px; 
+  overflow: hidden;
+}
+
+.fp-success-bar-fill {
+  height: 100%; 
+  background: linear-gradient(90deg, #16a34a, #22c55e);
+  border-radius: 99px;
+  animation: fpBarFill 3s linear forwards;
+}
+
+@keyframes fpBarFill { 
+  from { width: 0%; } 
+  to { width: 100%; } 
+}

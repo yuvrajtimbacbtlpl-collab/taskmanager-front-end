@@ -1,0 +1,190 @@
+/* =====================================================
+   WORD-LIKE DOCUMENT EDITOR — WordEditor.css
+   ===================================================== */
+
+/* —— MODAL & FULL-SCREEN SETUP —— */
+.word-modal-card {
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  border-radius: 8px !important;
+  width: 98vw !important;
+  max-width: 98vw !important;
+  height: 98vh !important;
+  max-height: 98vh !important;
+  background: #e2e6ed !important;
+}
+
+/* —— TOP BAR (Restored Layout) —— */
+.word-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #2b579a;
+  color: #fff;
+  padding: 0 16px;
+  flex-shrink: 0;
+  height: 48px;
+}
+
+.word-title-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.word-doc-name {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 4px;
+  padding: 5px 12px;
+  color: #fff;
+  font-size: 14px;
+  width: 300px;
+  outline: none;
+}
+
+.word-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* —— RIBBON MENU (Restored Horizontal Layout) —— */
+.word-ribbon-tabs {
+  display: flex;
+  flex-direction: row; /* Fixed vertical stacking */
+  background: #f0f3f9;
+  border-bottom: 1px solid #cfd7e8;
+  padding: 0 10px;
+  flex-shrink: 0;
+}
+
+.ribbon-tab {
+  padding: 8px 20px;
+  font-size: 13px;
+  cursor: pointer;
+  color: #444;
+  border-bottom: 3px solid transparent;
+}
+
+.ribbon-tab.active {
+  background: #fff;
+  color: #2b579a;
+  font-weight: bold;
+  border-bottom: 3px solid #2b579a;
+}
+
+/* —— RIBBON CONTENT (Table, Link, Members) —— */
+.word-ribbon-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-bottom: 1px solid #d1d5db;
+  padding: 8px 20px;
+  flex-shrink: 0;
+}
+
+.ribbon-group-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ✅ FIX: ASSIGN MEMBERS DROPDOWN */
+.word-member-select-container {
+  width: 240px !important;
+  min-width: 240px;
+}
+
+/* —— WORKSPACE & SCROLLBAR —— */
+.word-workspace {
+  flex: 1;
+  overflow-y: auto;
+  background: #e2e6ed;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.word-workspace::-webkit-scrollbar { width: 10px; }
+.word-workspace::-webkit-scrollbar-track { background: #d1d5db; }
+.word-workspace::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 10px;
+}
+
+/* —— A4 PAGE DESIGN —— */
+.word-a4-page {
+  background: #fff;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border-radius: 2px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.word-a4-page--active {
+  box-shadow: 0 8px 30px rgba(43,87,154,0.2), 0 0 0 2px #2b579a;
+}
+
+/* ✅ FIX: PAGE HEADER ALIGNMENT */
+.word-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 20px;
+  background: #fdfdfd;
+  border-bottom: 1px solid #f1f5f9;
+  flex-shrink: 0;
+}
+
+.word-page-number {
+  font-size: 10px;
+  font-weight: bold;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+/* —— CKEDITOR STYLING —— */
+.word-a4-page .ck-editor__editable {
+  padding: 1.5cm 2cm !important;
+  border: none !important;
+  box-shadow: none !important;
+  font-size: 12pt;
+  line-height: 1.6;
+  flex: 1;
+}
+
+.word-a4-page .ck.ck-toolbar {
+  border: none !important;
+  border-bottom: 1px solid #eee !important;
+  background: #fafafa !important;
+}
+
+/* Hide toolbar on inactive pages */
+.word-a4-page:not(.word-a4-page--active) .ck.ck-toolbar {
+  display: none !important;
+}
+
+/* —— CLOSE BUTTON —— */
+.word-close-btn {
+  background: rgba(255,255,255,0.1);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+.word-close-btn:hover { background: #ef4444; }

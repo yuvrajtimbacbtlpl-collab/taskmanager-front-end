@@ -1,0 +1,237 @@
+/* ================================================================
+   DeleteConfirmPopup.css — Staff delete with password verification
+   ================================================================ */
+
+/* ── Overlay ── */
+.dcp-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.56);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 20px;
+  animation: dcpOverlayIn 0.18s ease;
+}
+@keyframes dcpOverlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Card ── */
+.dcp-card {
+  width: 420px;
+  max-width: calc(100vw - 32px);
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 36px 30px 28px;
+  text-align: center;
+  position: relative;
+  box-shadow:
+    0 32px 72px rgba(0, 0, 0, 0.18),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
+  animation: dcpCardIn 0.24s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes dcpCardIn {
+  from { transform: scale(0.86) translateY(12px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* ── Close ── */
+.dcp-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  border: none;
+  background: #f1f5f9;
+  color: #64748b;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.dcp-close:hover { background: #fee2e2; color: #ef4444; }
+
+/* ── Icon ── */
+.dcp-icon-wrap {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fee2e2, #fecaca);
+  color: #dc2626;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 18px;
+  box-shadow: 0 8px 28px rgba(239, 68, 68, 0.22);
+}
+
+/* ── Title & Message ── */
+.dcp-title {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.3px;
+}
+.dcp-msg {
+  color: #64748b;
+  font-size: 13.5px;
+  line-height: 1.6;
+  margin: 0 0 18px;
+}
+
+/* ── Password Field ── */
+.dcp-field {
+  text-align: left;
+  margin-bottom: 14px;
+}
+.dcp-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 7px;
+}
+.dcp-input-wrap {
+  position: relative;
+}
+.dcp-input {
+  width: 100%;
+  padding: 10px 42px 10px 13px;
+  border-radius: 9px;
+  border: 1.5px solid #e2e8f0;
+  font-size: 13.5px;
+  font-family: inherit;
+  color: #1e293b;
+  background: #f8fafc;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  box-sizing: border-box;
+}
+.dcp-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+.dcp-input--error {
+  border-color: #ef4444 !important;
+  background: #fff5f5 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+.dcp-eye {
+  position: absolute;
+  right: 12px; top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  display: flex; align-items: center;
+  transition: color 0.15s;
+  padding: 0;
+}
+.dcp-eye:hover { color: #475569; }
+.dcp-error {
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── Timestamp ── */
+.dcp-timestamp {
+  display: inline-block;
+  font-size: 11.5px;
+  color: #94a3b8;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+  padding: 5px 14px;
+  margin-bottom: 22px;
+}
+
+/* ── Warning bar (simple mode) ── */
+.dcp-warning-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: #92400e;
+  font-weight: 500;
+  margin-bottom: 22px;
+}
+
+/* ── Actions ── */
+.dcp-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+.dcp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 22px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s;
+  border: none;
+  font-family: inherit;
+  min-width: 120px;
+  justify-content: center;
+}
+.dcp-btn--cancel {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1.5px solid #e2e8f0;
+}
+.dcp-btn--cancel:hover:not(:disabled) { background: #e2e8f0; border-color: #cbd5e1; }
+
+.dcp-btn--delete {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.34);
+}
+.dcp-btn--delete:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.44);
+}
+.dcp-btn--delete:active:not(:disabled) { transform: translateY(0); }
+.dcp-btn--delete:disabled { opacity: 0.55; cursor: not-allowed; }
+.dcp-btn--cancel:disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* ── Spinner ── */
+.dcp-spinner-wrap {
+  display: flex; align-items: center; gap: 8px;
+}
+.dcp-spinner {
+  width: 14px; height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: dcpSpin 0.65s linear infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+@keyframes dcpSpin { to { transform: rotate(360deg); } }
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .dcp-card { padding: 30px 20px 22px; }
+  .dcp-actions { flex-direction: column-reverse; }
+  .dcp-btn { width: 100%; }
+}

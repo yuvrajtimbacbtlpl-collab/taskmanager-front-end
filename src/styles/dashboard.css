@@ -1,0 +1,201 @@
+/* =====================================================
+   dashboard.css — Layout, Sidebar, Topbar, Forms
+   Global utilities are in styles.css — no duplicates here
+   ===================================================== */
+
+/* ── LAYOUT ── */
+.dashboard {
+  display: flex;
+  height: 100vh;
+  background: #f5f7fb;
+  overflow: hidden;
+}
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+.content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 28px 30px;
+  background: #f5f7fb;
+}
+.content::-webkit-scrollbar { width: 6px; }
+.content::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 99px; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 240px;
+  z-index: 10;
+  height: 100vh;
+  background: #ffffff;
+  border-right: 1px solid #eef0f6;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.sidebar-logo-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 20px 20px 0; margin-bottom: 4px;
+}
+.sidebar-logo-icon {
+  width: 32px; height: 32px; border-radius: 9px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  box-shadow: 0 3px 10px rgba(99,102,241,0.3);
+}
+.sidebar-title {
+  font-size: 15px; font-weight: 800; color: #1e293b;
+  letter-spacing: -0.3px; margin: 0; padding: 0;
+}
+.sidebar-subtitle {
+  font-size: 9.5px; color: #94a3b8; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+.sidebar-divider { height: 1px; background: #f1f5f9; margin: 10px 16px; }
+.sidebar-nav { flex: 1; overflow-y: auto; padding: 4px 12px 12px; }
+.sidebar-nav::-webkit-scrollbar { width: 0; }
+.sidebar-section-label {
+  font-size: 10px; font-weight: 700; color: #94a3b8;
+  letter-spacing: 0.8px; text-transform: uppercase; padding: 10px 8px 5px;
+}
+.sidebar-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: 9px; color: #64748b;
+  font-size: 13.5px; font-weight: 500; text-decoration: none;
+  transition: all 0.15s ease; margin-bottom: 2px; white-space: nowrap;
+  position: relative;
+}
+.sidebar-link .icon { flex-shrink: 0; color: #94a3b8; transition: color 0.15s; }
+.sidebar-link:hover { background: #f1f5f9; color: #1e293b; }
+.sidebar-link:hover .icon { color: #6366f1; }
+.sidebar-link.active { background: #eef2ff; color: #4f46e5; font-weight: 600; }
+.sidebar-link.active .icon { color: #6366f1; }
+.sidebar-link.active::before {
+  content: ""; position: absolute; left: 0; top: 6px; bottom: 6px;
+  width: 3px; border-radius: 0 3px 3px 0; background: #6366f1;
+}
+.notif-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: #ef4444;
+  position: absolute; top: 8px; right: 10px;
+  box-shadow: 0 0 0 2px #fff;
+}
+.badge-pill {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px; padding: 0 5px;
+  background: #ef4444; color: #fff; border-radius: 999px;
+  font-size: 10px; font-weight: 700; margin-left: auto;
+}
+.sidebar-footer { padding: 10px 16px 14px; border-top: 1px solid #f1f5f9; }
+.sidebar-version { font-size: 10px; color: #cbd5e1; text-align: center; font-family: monospace; }
+
+/* ── FORMS ── */
+.form-title { font-size: 18px; font-weight: 700; margin-bottom: 18px; color: #0f172a; }
+.field { margin-bottom: 16px; }
+.field label { display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
+.field input, .field select, .field textarea {
+  width: 100%; padding: 10px 13px; border-radius: 8px;
+  border: 1.5px solid #e2e8f0; font-size: 13.5px; font-family: inherit;
+  color: #1e293b; background: #fff; transition: border-color 0.2s, box-shadow 0.2s;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+}
+.field textarea { resize: vertical; min-height: 80px; }
+.error-text, .input-hint { font-size: 11.5px; margin-top: 4px; }
+.error-text { color: #ef4444; font-weight: 500; }
+.input-hint { color: #94a3b8; }
+.server-error { background: #fef2f2; color: #dc2626; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 14px; border: 1px solid #fecaca; }
+.success-msg  { background: #f0fdf4; color: #16a34a; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 14px; border: 1px solid #bbf7d0; }
+.form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid #f1f5f9; }
+
+/* ── MODAL CARD (used in staff, roles, etc.) ── */
+.staff-overlay, .modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(15,23,42,0.48); backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 99990; padding: 20px;
+  animation: overlayIn 0.18s ease; box-sizing: border-box;
+}
+@keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal-card, .staff-form-card {
+  background: #fff; border-radius: 16px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04);
+  max-height: 92vh; overflow-y: auto;
+  animation: cardIn 0.22s ease;
+  scrollbar-width: thin; scrollbar-color: #e2e8f0 transparent;
+}
+.modal-card::-webkit-scrollbar, .staff-form-card::-webkit-scrollbar { width: 4px; }
+.modal-card::-webkit-scrollbar-thumb, .staff-form-card::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 99px; }
+@keyframes cardIn {
+  from { transform: translateY(14px) scale(0.98); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+.staff-form-card { width: 700px; min-width: 35%; padding: 28px 32px; }
+
+.modal-header, .staff-form-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;
+}
+.modal-header { padding: 20px 24px; margin-bottom: 0; border-bottom: 1px solid #f1f5f9; position: sticky; top: 0; background: #fff; z-index: 1; border-radius: 16px 16px 0 0; }
+.modal-header h3, .staff-form-header h3 { margin: 0; font-size: 16px; font-weight: 700; color: #0f172a; }
+.modal-close, .close-btn {
+  width: 28px; height: 28px; border-radius: 7px;
+  background: #f1f5f9; color: #64748b; border: none;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 15px; transition: all 0.15s; line-height: 1;
+}
+.modal-close:hover, .close-btn:hover { background: #fee2e2; color: #ef4444; }
+
+/* ── COMMON TABLE CARD ── */
+.common-table-card {
+  background: #fff; border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  border: 1px solid #f1f5f9; overflow: hidden;
+}
+.common-table-card.blur { opacity: 0.4; pointer-events: none; }
+.info-msg { background: #eef2ff; color: #4338ca; padding: 10px 15px; border-radius: 8px; margin-bottom: 20px; font-size: 13.5px; }
+.dashboard-home.blurred { filter: blur(3px); pointer-events: none; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .content { padding: 20px 16px; }
+  .staff-form-card { width: 95%; min-width: auto; padding: 22px 18px; }
+  .modal-card { width: 95%; }
+}
+
+/* ── CHAT NAV BADGE (sidebar unread count) ── */
+.chat-nav-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: #ef4444;
+  color: #fff;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  margin-left: auto;
+  line-height: 1;
+  box-shadow: 0 0 0 2px #fff;
+  animation: badgePop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes badgePop {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}
