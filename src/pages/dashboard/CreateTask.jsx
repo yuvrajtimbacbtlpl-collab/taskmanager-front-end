@@ -3,10 +3,11 @@ import { api } from "../../api";
 import { useCompany } from "../../hooks/useCompany";
 import taskService from "../../services/taskService";
 import CommonTable from "../../components/CommonTable";
+import KanbanBoard from "../../components/kanbanBoard";
 import { useAuth } from "../../context/AuthContext";
 import { useProject } from "../../context/ProjectContext";
 import socketService from "../../services/socketService";
-import { Pencil, Trash2, Eye, Upload, X, Clock, Timer, AlertCircle } from "lucide-react";
+import { Pencil, Trash2, Eye, Upload, X, Clock, Timer, AlertCircle, LayoutGrid, Table2 } from "lucide-react";
 import TableSkeleton from "../../components/TableSkeleton";
 import BulkUpload from "../../components/BulkUpload";
 import ConfirmDelete from "../../components/ConfirmDelete";
@@ -186,6 +187,7 @@ export default function CreateTask() {
   const [deleteName, setDeleteName] = useState("");
   const [deleting,   setDeleting]   = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [viewMode,   setViewMode]   = useState(() => localStorage.getItem("task_view_mode") || "table");
 
   const [form, setForm] = useState({
     title: "", description: "", assignedTo: "", status: "",
@@ -351,13 +353,33 @@ export default function CreateTask() {
       {toast && <ToastMessage key={toast.id} {...toast} onClose={clearToast} />}
 
       <PageHeader title="Task Management" actions={
-        canCreate && !isGlobal && selectedProject?._id && (
-          <div style={{display:"flex",gap:"10px",alignItems:"center"}}>
-            <BulkUpload type="task" projectId={selectedProject?._id} companyId={companyId}
-              onUploadSuccess={fetchTasks} onShowToast={showToast} />
-            <button className="btn-primary" onClick={()=>setShowForm(true)}>+ Create Task</button>
+        <div style={{display:"flex",gap:"10px",alignItems:"center",flexWrap:"wrap"}}>
+          <div style={{display:"flex",border:"1.5px solid #e2e8f0",borderRadius:"9px",overflow:"hidden",background:"#f8fafc"}}>
+            <button title="Table View"
+              onClick={()=>{setViewMode("table");localStorage.setItem("task_view_mode","table");}}
+              style={{display:"flex",alignItems:"center",gap:"5px",padding:"7px 14px",border:"none",cursor:"pointer",
+                fontSize:"12px",fontWeight:600,
+                background:viewMode==="table"?"#4f46e5":"transparent",
+                color:viewMode==="table"?"#fff":"#64748b",transition:"all 0.15s"}}>
+              <Table2 size={14}/> Table
+            </button>
+            <button title="Kanban View"
+              onClick={()=>{setViewMode("kanban");localStorage.setItem("task_view_mode","kanban");}}
+              style={{display:"flex",alignItems:"center",gap:"5px",padding:"7px 14px",border:"none",cursor:"pointer",
+                fontSize:"12px",fontWeight:600,
+                background:viewMode==="kanban"?"#4f46e5":"transparent",
+                color:viewMode==="kanban"?"#fff":"#64748b",transition:"all 0.15s"}}>
+              <LayoutGrid size={14}/> Kanban
+            </button>
           </div>
-        )
+          {canCreate && !isGlobal && selectedProject?._id && (
+            <>
+              <BulkUpload type="task" projectId={selectedProject?._id} companyId={companyId}
+                onUploadSuccess={fetchTasks} onShowToast={showToast} />
+              <button className="btn-primary" onClick={()=>setShowForm(true)}>+ Create Task</button>
+            </>
+          )}
+        </div>
       } />
 
       {scheduleSummary && (
@@ -385,7 +407,27 @@ export default function CreateTask() {
         </div>
       </div>
 
-      {loading ? <TableSkeleton columns={5} rows={limit} /> : (
+      {loading ? <TableSkeleton columns={5} rows={limit} /> : viewMode === "kanban" ? (
+        <KanbanBoard
+          tasks={tasks}
+          statuses={statuses}
+          canUpdate={canUpdate}
+          canDelete={canDelete}
+          onView={row=>setViewTask(row)}
+          onEdit={row=>{
+            setEditingId(row._id);
+            setForm({
+              title:row.title||"", description:row.description||"",
+              assignedTo:row.assignedTo?._id||"", status:row.status||"",
+              priority:row.priority||"Normal", media:row.media||[],
+              estimatedHours: row.estimatedHours != null ? String(row.estimatedHours) : "",
+            });
+            setShowForm(true);
+          }}
+          onDelete={row=>{setDeleteId(row._id);setDeleteName(row.title);}}
+          onStatusChange={(row,newStatus)=>updateInline(row,{status:newStatus})}
+        />
+      ) : (
         <CommonTable
           columns={[
             { header:"Title", accessor:"title" },
@@ -461,6 +503,7 @@ export default function CreateTask() {
       {/* ─── VIEW MODAL ─── */}
       <FormModal open={!!viewTask} onClose={()=>setViewTask(null)}
         title={viewTask?.type?.toUpperCase()||"TASK"} size="lg">
+
         {viewTask && (
           <div style={{padding:"10px 5px",color:"#1a1a1a"}}>
             <h2 style={{fontSize:"22px",fontWeight:600,margin:"0 0 6px 0"}}>{viewTask.title}</h2>

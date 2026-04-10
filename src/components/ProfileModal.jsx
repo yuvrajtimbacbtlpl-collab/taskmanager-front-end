@@ -1,38 +1,36 @@
-// src/components/ProfileModal.jsx — Full industry-level profile editor
+// src/components/ProfileModal.jsx — Task Manager profile (project-relevant fields only)
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { api } from "../api";
 import { useAuth } from "../context/AuthContext";
 import {
-  X, Camera, User, Mail, Phone, Briefcase, MapPin,
-  Globe, Linkedin, Twitter, Lock, Eye, EyeOff,
-  Save, Trash2, CheckCircle, AlertCircle, Building2,
-  Calendar, Edit3, Shield,
+  X, Camera, User, Mail, Phone, Briefcase,
+  Lock, Eye, EyeOff, Save, Trash2,
+  CheckCircle, AlertCircle, Building2,
+  Calendar, Edit3, Shield, Users,
 } from "lucide-react";
 import "./ProfileModal.css";
 
 const BASE_URL = import.meta.env.VITE_API_URL?.replace("/api", "") || "http://localhost:4000";
 
-/* ── password strength ── */
-const pwStrength = (pw) => {
+/* ── helpers ── */
+const pwStr = (pw) => {
   let s = 0;
-  if (pw.length >= 8)        s++;
-  if (/[A-Z]/.test(pw))      s++;
-  if (/[0-9]/.test(pw))      s++;
-  if (/[@$!%*?&]/.test(pw))  s++;
+  if (pw.length >= 8)       s++;
+  if (/[A-Z]/.test(pw))     s++;
+  if (/[0-9]/.test(pw))     s++;
+  if (/[@$!%*?&]/.test(pw)) s++;
   return s;
 };
 const STR_COLOR = ["", "#ef4444", "#f59e0b", "#3b82f6", "#16a34a"];
-const STR_LABEL = ["", "Weak", "Fair", "Good", "Strong"];
+const STR_LABEL = ["", "Weak",    "Fair",    "Good",    "Strong"];
 
-/* ── avatar URL helper ── */
-const avatarUrl = (img) => {
+const getAvatarSrc = (img) => {
   if (!img) return null;
-  if (img.startsWith("http")) return img;
-  return `${BASE_URL}/${img}`;
+  return img.startsWith("http") ? img : `${BASE_URL}/${img}`;
 };
 
-/* ── inline toast ── */
+/* ── Inline toast ── */
 function InlineToast({ msg, type, onClose }) {
   useEffect(() => {
     if (!msg) return;
@@ -40,51 +38,58 @@ function InlineToast({ msg, type, onClose }) {
     return () => clearTimeout(t);
   }, [msg]);
   if (!msg) return null;
-  const colors = {
-    success: { bg:"#f0fdf4", border:"#bbf7d0", color:"#15803d", icon:<CheckCircle size={16}/> },
-    error:   { bg:"#fef2f2", border:"#fecaca", color:"#b91c1c", icon:<AlertCircle  size={16}/> },
+  const styles = {
+    success: { bg:"#f0fdf4", border:"#bbf7d0", color:"#15803d", icon:<CheckCircle size={15}/> },
+    error:   { bg:"#fef2f2", border:"#fecaca", color:"#b91c1c", icon:<AlertCircle  size={15}/> },
   };
-  const c = colors[type] || colors.success;
+  const s = styles[type] || styles.success;
   return (
-    <div style={{ display:"flex", alignItems:"center", gap:8, padding:"10px 14px",
-      background:c.bg, border:`1px solid ${c.border}`, borderRadius:9,
-      fontSize:13, color:c.color, fontWeight:500, marginBottom:14 }}>
-      {c.icon} {msg}
-      <button onClick={onClose} style={{ marginLeft:"auto", background:"none", border:"none",
-        cursor:"pointer", color:"inherit", fontSize:16, lineHeight:1, opacity:.6 }}>×</button>
+    <div style={{
+      display:"flex", alignItems:"center", gap:8,
+      padding:"10px 14px", background:s.bg, border:`1px solid ${s.border}`,
+      borderRadius:9, fontSize:13, color:s.color, fontWeight:500, marginBottom:16,
+    }}>
+      {s.icon} {msg}
+      <button onClick={onClose} style={{
+        marginLeft:"auto", background:"none", border:"none",
+        cursor:"pointer", color:"inherit", fontSize:18, lineHeight:1, opacity:.5,
+      }}>×</button>
     </div>
   );
 }
 
+/* ════════════════════════════
+   MAIN COMPONENT
+════════════════════════════ */
 export default function ProfileModal({ onClose }) {
-  const { user, updateUser } = useAuth();
+  const { user, loadUser } = useAuth();
   const fileRef = useRef();
 
-  const [tab, setTab] = useState("profile"); // profile | security
-  const [saving, setSaving] = useState(false);
-  const [toast, setToast] = useState({ msg:"", type:"success" });
+  const [tab,     setTab]     = useState("profile");
+  const [saving,  setSaving]  = useState(false);
+  const [toast,   setToast]   = useState({ msg:"", type:"success" });
   const showToast = (msg, type="success") => setToast({ msg, type });
 
-  /* ── profile form ── */
+  /* ── profile form — only project-relevant fields ── */
   const [form, setForm] = useState({
     username:   user?.username   || "",
     phone:      user?.phone      || "",
-    bio:        user?.bio        || "",
     jobTitle:   user?.jobTitle   || "",
     department: user?.department || "",
-    location:   user?.location   || "",
-    website:    user?.website    || "",
-    linkedin:   user?.linkedin   || "",
-    twitter:    user?.twitter    || "",
+    bio:        user?.bio        || "",
   });
 
   /* ── avatar ── */
-  const [previewImg, setPreviewImg] = useState(avatarUrl(user?.image) || null);
+  const [previewImg,      setPreviewImg]      = useState(getAvatarSrc(user?.image) || null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
+  useEffect(() => {
+    setPreviewImg(getAvatarSrc(user?.image) || null);
+  }, [user?.image]);
+
   /* ── password ── */
-  const [pwForm, setPwForm] = useState({ current:"", new:"", confirm:"" });
-  const [showPw, setShowPw] = useState({ current:false, new:false, confirm:false });
+  const [pwForm,  setPwForm]  = useState({ current:"", next:"", confirm:"" });
+  const [showPw,  setShowPw]  = useState({ current:false, next:false, confirm:false });
 
   /* ESC to close */
   useEffect(() => {
@@ -99,23 +104,19 @@ export default function ProfileModal({ onClose }) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) { showToast("Image must be under 5 MB", "error"); return; }
-
-    // Preview immediately
     const reader = new FileReader();
     reader.onload = (ev) => setPreviewImg(ev.target.result);
     reader.readAsDataURL(file);
-
-    // Upload
     setUploadingAvatar(true);
     try {
       const fd = new FormData();
       fd.append("avatar", file);
-      const res = await api("/users/profile/avatar", { method:"POST", body: fd });
-      updateUser({ image: res.imageUrl });
+      await api("/users/profile/avatar", { method:"POST", body: fd });
+      await loadUser();
       showToast("Profile photo updated!");
     } catch (err) {
       showToast(err.message || "Upload failed", "error");
-      setPreviewImg(avatarUrl(user?.image) || null);
+      setPreviewImg(getAvatarSrc(user?.image) || null);
     } finally {
       setUploadingAvatar(false);
       e.target.value = "";
@@ -124,9 +125,9 @@ export default function ProfileModal({ onClose }) {
 
   const removeAvatar = async () => {
     try {
-      await api("/users/profile/avatar", { method: "DELETE" });
+      await api("/users/profile/avatar", { method:"DELETE" });
       setPreviewImg(null);
-      updateUser({ image: "" });
+      await loadUser();
       showToast("Profile photo removed");
     } catch (err) {
       showToast(err.message || "Failed to remove", "error");
@@ -138,8 +139,8 @@ export default function ProfileModal({ onClose }) {
     if (!form.username.trim()) { showToast("Name is required", "error"); return; }
     setSaving(true);
     try {
-      const res = await api("/users/profile/update", { method:"PUT", body: form });
-      updateUser(form);
+      await api("/users/profile/update", { method:"PUT", body: form });
+      await loadUser();
       showToast("Profile saved successfully!");
     } catch (err) {
       showToast(err.message || "Save failed", "error");
@@ -150,13 +151,22 @@ export default function ProfileModal({ onClose }) {
 
   /* ── change password ── */
   const changePassword = async () => {
-    if (!pwForm.current || !pwForm.new || !pwForm.confirm) { showToast("Fill in all password fields", "error"); return; }
-    if (pwForm.new !== pwForm.confirm) { showToast("New passwords don't match", "error"); return; }
-    if (pwStrength(pwForm.new) < 3) { showToast("Password is too weak", "error"); return; }
+    if (!pwForm.current || !pwForm.next || !pwForm.confirm) {
+      showToast("Fill in all password fields", "error"); return;
+    }
+    if (pwForm.next !== pwForm.confirm) {
+      showToast("New passwords don't match", "error"); return;
+    }
+    if (pwStr(pwForm.next) < 3) {
+      showToast("Password is too weak — use uppercase, number & symbol", "error"); return;
+    }
     setSaving(true);
     try {
-      await api("/users/profile/change-password", { method:"PUT", body:{ currentPassword: pwForm.current, newPassword: pwForm.new } });
-      setPwForm({ current:"", new:"", confirm:"" });
+      await api("/users/profile/change-password", {
+        method:"PUT",
+        body:{ currentPassword: pwForm.current, newPassword: pwForm.next },
+      });
+      setPwForm({ current:"", next:"", confirm:"" });
       showToast("Password changed successfully!");
     } catch (err) {
       showToast(err.message || "Failed to change password", "error");
@@ -165,82 +175,90 @@ export default function ProfileModal({ onClose }) {
     }
   };
 
-  const initials = (user?.username || "U").split(" ").map(w=>w[0]).slice(0,2).join("").toUpperCase();
-  const memberSince = user?.createdAt ? new Date(user.createdAt).toLocaleDateString("en-IN", { day:"numeric", month:"long", year:"numeric" }) : "—";
+  /* ── derived display values ── */
+  const initials    = (user?.username || "U").split(" ").map(w=>w[0]).slice(0,2).join("").toUpperCase();
+  const roleName    = user?.role || "Member";
+  const companyName = user?.company?.name || user?.company || "";
+  const memberSince = user?.createdAt
+    ? new Date(user.createdAt).toLocaleDateString("en-IN", { day:"numeric", month:"long", year:"numeric" })
+    : "—";
+  const strength = pwStr(pwForm.next);
 
+  /* ── RENDER ── */
   return createPortal(
     <div className="pm-overlay" onClick={onClose}>
       <div className="pm-modal" onClick={(e) => e.stopPropagation()}>
 
-        {/* ── Left panel ── */}
+        {/* ════ LEFT SIDEBAR ════ */}
         <div className="pm-sidebar">
+
           {/* Avatar */}
           <div className="pm-avatar-section">
             <div className="pm-avatar-wrap">
               {previewImg
-                ? <img src={previewImg} alt="avatar" className="pm-avatar-img" />
-                : <div className="pm-avatar-initials">{initials}</div>
-              }
+                ? <img src={previewImg} alt="avatar" className="pm-avatar-img"/>
+                : <div className="pm-avatar-initials">{initials}</div>}
               {uploadingAvatar && (
                 <div className="pm-avatar-uploading"><div className="pm-avatar-spinner"/></div>
               )}
               <button className="pm-avatar-camera" onClick={() => fileRef.current?.click()} title="Change photo">
-                <Camera size={14}/>
+                <Camera size={13}/>
               </button>
             </div>
-            <input ref={fileRef} type="file" accept="image/*" hidden onChange={handleAvatarChange}/>
-
+            <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={handleAvatarChange}/>
             {previewImg && (
-              <button className="pm-remove-photo" onClick={removeAvatar} title="Remove photo">
-                <Trash2 size={12}/> Remove
+              <button className="pm-remove-photo" onClick={removeAvatar}>
+                <Trash2 size={11}/> Remove
               </button>
             )}
           </div>
 
-          {/* User info */}
+          {/* Name + role */}
           <div className="pm-sidebar-info">
             <h3 className="pm-sidebar-name">{user?.username}</h3>
-            {form.jobTitle && <p className="pm-sidebar-role">{form.jobTitle}</p>}
-            <div className="pm-sidebar-badge">
-              <Shield size={11}/>
-              {user?.role || "Member"}
-            </div>
+            {form.jobTitle && <p className="pm-sidebar-jobtitle">{form.jobTitle}</p>}
+            <span className="pm-sidebar-badge"><Shield size={11}/> {roleName}</span>
           </div>
 
           {/* Meta */}
           <div className="pm-sidebar-meta">
             {user?.email && (
-              <div className="pm-meta-row"><Mail size={13}/><span>{user.email}</span></div>
+              <div className="pm-meta-row"><Mail size={12}/><span>{user.email}</span></div>
             )}
-            {user?.company?.name && (
-              <div className="pm-meta-row"><Building2 size={13}/><span>{user.company.name}</span></div>
+            {companyName && (
+              <div className="pm-meta-row"><Building2 size={12}/><span>{companyName}</span></div>
             )}
-            <div className="pm-meta-row"><Calendar size={13}/><span>Joined {memberSince}</span></div>
+            {form.department && (
+              <div className="pm-meta-row"><Users size={12}/><span>{form.department}</span></div>
+            )}
+            <div className="pm-meta-row"><Calendar size={12}/><span>Joined {memberSince}</span></div>
           </div>
 
-          {/* Nav tabs */}
+          {/* Tab nav */}
           <nav className="pm-nav">
-            <button className={`pm-nav-btn ${tab==="profile"?"active":""}`} onClick={() => setTab("profile")}>
-              <User size={15}/> Profile
+            <button className={`pm-nav-btn${tab==="profile" ? " active" : ""}`} onClick={() => setTab("profile")}>
+              <User size={14}/> My Profile
             </button>
-            <button className={`pm-nav-btn ${tab==="security"?"active":""}`} onClick={() => setTab("security")}>
-              <Lock size={15}/> Security
+            <button className={`pm-nav-btn${tab==="security" ? " active" : ""}`} onClick={() => setTab("security")}>
+              <Lock size={14}/> Change Password
             </button>
           </nav>
         </div>
 
-        {/* ── Right panel ── */}
+        {/* ════ RIGHT CONTENT ════ */}
         <div className="pm-content">
           <div className="pm-content-header">
             <div>
               <h2 className="pm-content-title">
-                {tab==="profile" ? "Edit Profile" : "Security Settings"}
+                {tab === "profile" ? "Edit Profile" : "Change Password"}
               </h2>
               <p className="pm-content-sub">
-                {tab==="profile" ? "Update your personal information and details" : "Manage your password and account security"}
+                {tab === "profile"
+                  ? "Update your name, contact and work details"
+                  : "Keep your account secure with a strong password"}
               </p>
             </div>
-            <button className="pm-close" onClick={onClose}><X size={17}/></button>
+            <button className="pm-close" onClick={onClose}><X size={16}/></button>
           </div>
 
           <div className="pm-content-body">
@@ -249,26 +267,47 @@ export default function ProfileModal({ onClose }) {
             {/* ══ PROFILE TAB ══ */}
             {tab === "profile" && (
               <>
-                {/* Basic info */}
+                {/* Account info (read-only) */}
                 <div className="pm-section">
-                  <h4 className="pm-section-title">Basic Information</h4>
+                  <h4 className="pm-section-title">Account</h4>
                   <div className="pm-grid-2">
                     <div className="pm-field">
-                      <label><User size={12}/> Full Name *</label>
-                      <input value={form.username} onChange={e => setForm({...form, username:e.target.value})} placeholder="Your full name"/>
+                      <label><Mail size={11}/> Email Address</label>
+                      <input value={user?.email || ""} disabled/>
+                      <span className="pm-field-hint">Contact admin to change your email</span>
                     </div>
                     <div className="pm-field">
-                      <label><Mail size={12}/> Email</label>
-                      <input value={user?.email || ""} disabled placeholder="Email address"/>
-                      <span className="pm-field-hint">Email cannot be changed here</span>
+                      <label><Shield size={11}/> Role</label>
+                      <input value={roleName} disabled/>
+                    </div>
+                    {companyName && (
+                      <div className="pm-field">
+                        <label><Building2 size={11}/> Company</label>
+                        <input value={companyName} disabled/>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Personal info */}
+                <div className="pm-section">
+                  <h4 className="pm-section-title">Personal Details</h4>
+                  <div className="pm-grid-2">
+                    <div className="pm-field">
+                      <label><User size={11}/> Full Name <span className="pm-required">*</span></label>
+                      <input
+                        value={form.username}
+                        onChange={e => setForm({...form, username: e.target.value})}
+                        placeholder="Your full name"
+                      />
                     </div>
                     <div className="pm-field">
-                      <label><Phone size={12}/> Phone</label>
-                      <input value={form.phone} onChange={e => setForm({...form, phone:e.target.value})} placeholder="+91 98765 43210"/>
-                    </div>
-                    <div className="pm-field">
-                      <label><MapPin size={12}/> Location</label>
-                      <input value={form.location} onChange={e => setForm({...form, location:e.target.value})} placeholder="City, Country"/>
+                      <label><Phone size={11}/> Phone Number</label>
+                      <input
+                        value={form.phone}
+                        onChange={e => setForm({...form, phone: e.target.value})}
+                        placeholder="+91 98765 43210"
+                      />
                     </div>
                   </div>
                 </div>
@@ -278,54 +317,45 @@ export default function ProfileModal({ onClose }) {
                   <h4 className="pm-section-title">Work Details</h4>
                   <div className="pm-grid-2">
                     <div className="pm-field">
-                      <label><Briefcase size={12}/> Job Title</label>
-                      <input value={form.jobTitle} onChange={e => setForm({...form, jobTitle:e.target.value})} placeholder="e.g. Frontend Developer"/>
+                      <label><Briefcase size={11}/> Job Title</label>
+                      <input
+                        value={form.jobTitle}
+                        onChange={e => setForm({...form, jobTitle: e.target.value})}
+                        placeholder="e.g. Frontend Developer"
+                      />
                     </div>
                     <div className="pm-field">
-                      <label><Building2 size={12}/> Department</label>
-                      <input value={form.department} onChange={e => setForm({...form, department:e.target.value})} placeholder="e.g. Engineering"/>
+                      <label><Users size={11}/> Department</label>
+                      <input
+                        value={form.department}
+                        onChange={e => setForm({...form, department: e.target.value})}
+                        placeholder="e.g. Engineering"
+                      />
                     </div>
                   </div>
                 </div>
 
                 {/* Bio */}
                 <div className="pm-section">
-                  <h4 className="pm-section-title">About</h4>
+                  <h4 className="pm-section-title">About Me</h4>
                   <div className="pm-field">
-                    <label><Edit3 size={12}/> Bio</label>
+                    <label><Edit3 size={11}/> Short Bio</label>
                     <textarea
                       value={form.bio}
-                      onChange={e => setForm({...form, bio:e.target.value.slice(0,300)})}
+                      onChange={e => setForm({...form, bio: e.target.value.slice(0, 200)})}
                       placeholder="Write a short bio about yourself…"
                       rows={3}
                     />
-                    <span className="pm-field-hint">{form.bio.length}/300 characters</span>
-                  </div>
-                </div>
-
-                {/* Links */}
-                <div className="pm-section">
-                  <h4 className="pm-section-title">Links & Social</h4>
-                  <div className="pm-grid-2">
-                    <div className="pm-field">
-                      <label><Globe size={12}/> Website</label>
-                      <input value={form.website} onChange={e => setForm({...form, website:e.target.value})} placeholder="https://yoursite.com"/>
-                    </div>
-                    <div className="pm-field">
-                      <label><Linkedin size={12}/> LinkedIn</label>
-                      <input value={form.linkedin} onChange={e => setForm({...form, linkedin:e.target.value})} placeholder="linkedin.com/in/username"/>
-                    </div>
-                    <div className="pm-field">
-                      <label><Twitter size={12}/> Twitter / X</label>
-                      <input value={form.twitter} onChange={e => setForm({...form, twitter:e.target.value})} placeholder="@username"/>
-                    </div>
+                    <span className="pm-field-hint">{form.bio.length}/200 characters</span>
                   </div>
                 </div>
 
                 <div className="pm-footer">
                   <button className="pm-btn-cancel" onClick={onClose}>Cancel</button>
                   <button className="pm-btn-save" onClick={saveProfile} disabled={saving}>
-                    {saving ? <><span className="pm-spinner"/>Saving…</> : <><Save size={14}/> Save Profile</>}
+                    {saving
+                      ? <><span className="pm-spinner"/> Saving…</>
+                      : <><Save size={13}/> Save Changes</>}
                   </button>
                 </div>
               </>
@@ -335,65 +365,76 @@ export default function ProfileModal({ onClose }) {
             {tab === "security" && (
               <>
                 <div className="pm-section">
-                  <h4 className="pm-section-title">Change Password</h4>
-                  <p className="pm-security-note">
-                    🔒 Use a strong password with at least 8 characters, uppercase, number and symbol.
-                  </p>
+                  <h4 className="pm-section-title">Password</h4>
+                  <div className="pm-security-note">
+                    🔒 Minimum 8 characters with at least one uppercase letter, number and symbol (@$!%*?&)
+                  </div>
 
-                  <div className="pm-field">
-                    <label><Lock size={12}/> Current Password</label>
+                  <div className="pm-field" style={{ marginBottom:14 }}>
+                    <label><Lock size={11}/> Current Password</label>
                     <div className="pm-pass-wrap">
-                      <input type={showPw.current?"text":"password"}
+                      <input
+                        type={showPw.current ? "text" : "password"}
                         value={pwForm.current}
-                        onChange={e => setPwForm({...pwForm, current:e.target.value})}
-                        placeholder="Enter your current password"/>
-                      <button type="button" className="pm-eye" onClick={() => setShowPw({...showPw, current:!showPw.current})}>
-                        {showPw.current ? <EyeOff size={15}/> : <Eye size={15}/>}
+                        onChange={e => setPwForm({...pwForm, current: e.target.value})}
+                        placeholder="Enter current password"
+                      />
+                      <button type="button" className="pm-eye"
+                        onClick={() => setShowPw({...showPw, current:!showPw.current})}>
+                        {showPw.current ? <EyeOff size={14}/> : <Eye size={14}/>}
                       </button>
                     </div>
                   </div>
 
-                  <div className="pm-field">
-                    <label><Lock size={12}/> New Password</label>
+                  <div className="pm-field" style={{ marginBottom:14 }}>
+                    <label><Lock size={11}/> New Password</label>
                     <div className="pm-pass-wrap">
-                      <input type={showPw.new?"text":"password"}
-                        value={pwForm.new}
-                        onChange={e => setPwForm({...pwForm, new:e.target.value})}
-                        placeholder="Create a new password"/>
-                      <button type="button" className="pm-eye" onClick={() => setShowPw({...showPw, new:!showPw.new})}>
-                        {showPw.new ? <EyeOff size={15}/> : <Eye size={15}/>}
+                      <input
+                        type={showPw.next ? "text" : "password"}
+                        value={pwForm.next}
+                        onChange={e => setPwForm({...pwForm, next: e.target.value})}
+                        placeholder="Create a new password"
+                      />
+                      <button type="button" className="pm-eye"
+                        onClick={() => setShowPw({...showPw, next:!showPw.next})}>
+                        {showPw.next ? <EyeOff size={14}/> : <Eye size={14}/>}
                       </button>
                     </div>
-                    {pwForm.new && (
+                    {pwForm.next && (
                       <div className="pm-strength">
                         <div className="pm-strength-bars">
                           {[1,2,3,4].map(n => (
-                            <div key={n} className={`pm-strength-bar ${pwStrength(pwForm.new) >= n ? "active" : ""}`}
-                              style={{ background: pwStrength(pwForm.new) >= n ? STR_COLOR[pwStrength(pwForm.new)] : undefined }}/>
+                            <div key={n} className={`pm-strength-bar${strength>=n?" active":""}`}
+                              style={{ background: strength>=n ? STR_COLOR[strength] : undefined }}/>
                           ))}
                         </div>
-                        <span style={{ fontSize:11, fontWeight:700, color: STR_COLOR[pwStrength(pwForm.new)] }}>
-                          {STR_LABEL[pwStrength(pwForm.new)]}
+                        <span style={{ fontSize:11, fontWeight:700, color:STR_COLOR[strength] }}>
+                          {STR_LABEL[strength]}
                         </span>
                       </div>
                     )}
                   </div>
 
                   <div className="pm-field">
-                    <label><Lock size={12}/> Confirm New Password</label>
+                    <label><Lock size={11}/> Confirm New Password</label>
                     <div className="pm-pass-wrap">
-                      <input type={showPw.confirm?"text":"password"}
+                      <input
+                        type={showPw.confirm ? "text" : "password"}
                         value={pwForm.confirm}
-                        onChange={e => setPwForm({...pwForm, confirm:e.target.value})}
-                        placeholder="Re-enter new password"/>
-                      <button type="button" className="pm-eye" onClick={() => setShowPw({...showPw, confirm:!showPw.confirm})}>
-                        {showPw.confirm ? <EyeOff size={15}/> : <Eye size={15}/>}
+                        onChange={e => setPwForm({...pwForm, confirm: e.target.value})}
+                        placeholder="Re-enter new password"
+                      />
+                      <button type="button" className="pm-eye"
+                        onClick={() => setShowPw({...showPw, confirm:!showPw.confirm})}>
+                        {showPw.confirm ? <EyeOff size={14}/> : <Eye size={14}/>}
                       </button>
                     </div>
-                    {pwForm.confirm && pwForm.new && (
-                      <span style={{ fontSize:12, fontWeight:600, marginTop:4, display:"block",
-                        color: pwForm.new===pwForm.confirm ? "#16a34a" : "#ef4444" }}>
-                        {pwForm.new===pwForm.confirm ? "✓ Passwords match" : "✗ Passwords don't match"}
+                    {pwForm.confirm && pwForm.next && (
+                      <span style={{
+                        fontSize:12, fontWeight:600, marginTop:5, display:"block",
+                        color: pwForm.next===pwForm.confirm ? "#16a34a" : "#ef4444",
+                      }}>
+                        {pwForm.next===pwForm.confirm ? "✓ Passwords match" : "✗ Passwords don't match"}
                       </span>
                     )}
                   </div>
@@ -402,13 +443,16 @@ export default function ProfileModal({ onClose }) {
                 <div className="pm-footer">
                   <button className="pm-btn-cancel" onClick={onClose}>Cancel</button>
                   <button className="pm-btn-save" onClick={changePassword} disabled={saving}>
-                    {saving ? <><span className="pm-spinner"/>Updating…</> : <><Lock size={14}/> Update Password</>}
+                    {saving
+                      ? <><span className="pm-spinner"/> Updating…</>
+                      : <><Lock size={13}/> Update Password</>}
                   </button>
                 </div>
               </>
             )}
           </div>
         </div>
+
       </div>
     </div>,
     document.body

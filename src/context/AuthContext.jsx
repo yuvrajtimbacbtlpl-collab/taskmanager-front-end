@@ -192,7 +192,8 @@ export const AuthProvider = ({ children }) => {
         hasFeatureAccess,
         isAuthenticated,
         getCurrentCompanyId,
-        updateUser,  // ✅ update local user state after profile save
+        updateUser,
+        loadUser,   // ✅ re-fetch full user from backend after profile save
       }}
     >
       {children}

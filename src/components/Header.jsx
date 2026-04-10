@@ -33,7 +33,11 @@ export default function Header({ role, user, onLogout }) {
   const roleName = (user?.role?.name || user?.role || role || "").toUpperCase();
   const isAdmin = roleName === "ADMIN";
   const isGlobal = isAdmin && selectedCompany?._id === "global";
-  const initials = user?.username?.charAt(0)?.toUpperCase() || "U";
+  const initials  = user?.username?.charAt(0)?.toUpperCase() || "U";
+  const BASE_URL  = import.meta.env.VITE_API_URL?.replace("/api", "") || "http://localhost:4000";
+  const avatarSrc = user?.image
+    ? (user.image.startsWith("http") ? user.image : `${BASE_URL}/${user.image}`)
+    : null;
   const dashboardTitle = isAdmin ? "Admin Dashboard" : roleName === "STAFF" ? "Staff Dashboard" : "Dashboard";
 
   // ── Fetch companies (ADMIN only) ─────────────────────────
@@ -298,13 +302,21 @@ export default function Header({ role, user, onLogout }) {
           <div className="topbar-user-wrapper" ref={menuRef}>
             <button className="topbar-profile-btn" onClick={() => setOpenMenu(!openMenu)}>
               <span className="topbar-username">{user?.username || "User"}</span>
-              <div className="topbar-avatar-circle">{initials}</div>
+              <div className="topbar-avatar-circle">
+                {avatarSrc
+                  ? <img src={avatarSrc} alt="" style={{width:"100%",height:"100%",borderRadius:"inherit",objectFit:"cover"}}/>
+                  : initials}
+              </div>
             </button>
 
             {openMenu && (
               <div className="topbar-dropdown" onMouseDown={(e) => e.stopPropagation()}>
                 <div className="dropdown-user">
-                  <div className="dropdown-avatar">{initials}</div>
+                  <div className="dropdown-avatar">
+                    {avatarSrc
+                      ? <img src={avatarSrc} alt="" style={{width:"100%",height:"100%",borderRadius:"inherit",objectFit:"cover"}}/>
+                      : initials}
+                  </div>
                   <div>
                     <div className="dropdown-name">{user?.username}</div>
                     <div className="dropdown-email">{user?.email}</div>
