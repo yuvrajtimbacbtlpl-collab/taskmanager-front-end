@@ -13,7 +13,7 @@ import { api } from "../api";
 import { useProject } from "../context/ProjectContext";
 import socketService from "../services/socketService";
 import { GLOBAL_COMPANY } from "../hooks/useCompany";
-import "../styles/topbar.css";
+import "../styles/topbar.css"
 
 export default function Header({ role, user, onLogout }) {
   const [showProfile, setShowProfile] = useState(false);
