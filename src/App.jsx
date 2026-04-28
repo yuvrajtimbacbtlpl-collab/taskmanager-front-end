@@ -27,6 +27,7 @@ import Documents from "./pages/dashboard/Documents";
 import Chat from "./pages/dashboard/Chat";
 import RegisterCompany from "./pages/RegisterCompany";
 import CompanyDashboard from "./pages/dashboard/CompanyPage";
+import Timesheet from "./pages/dashboard/Timesheet";
 
 // Components
 import SuccessNotificationPopup from "./components/SuccessNotificationPopup";
@@ -205,6 +206,9 @@ export default function App() {
               </PermissionRoute>
             }
           />
+
+          <Route path="timesheet" element={<Timesheet />} />
+
 
           <Route
             path="permissions"

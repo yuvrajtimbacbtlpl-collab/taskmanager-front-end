@@ -1,0 +1,72 @@
+/* src/styles/ThemeSettings.css */
+
+.theme-settings { display: flex; flex-direction: column; gap: 20px; }
+
+.ts-section { display: flex; flex-direction: column; gap: 10px; }
+
+.ts-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.6px; color: var(--gray-400);
+}
+
+/* Mode cards */
+.ts-mode-row { display: flex; gap: 8px; }
+
+.ts-mode-card {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  gap: 5px; padding: 12px 8px; border-radius: 10px; cursor: pointer;
+  border: 1.5px solid var(--border-base); background: var(--bg-card);
+  color: var(--gray-500); transition: all 0.15s; position: relative;
+}
+.ts-mode-card:hover { border-color: var(--brand-400); color: var(--gray-700); }
+.ts-mode-card.active {
+  border-color: var(--brand-500); background: var(--brand-50);
+  color: var(--brand-700);
+}
+.ts-mode-name { font-size: 12px; font-weight: 600; }
+.ts-mode-desc { font-size: 10px; color: var(--gray-400); }
+.ts-mode-check {
+  position: absolute; top: 6px; right: 6px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--brand-500); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* Color presets */
+.ts-presets { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.ts-color-dot {
+  width: 28px; height: 28px; border-radius: 50%; border: 2.5px solid transparent;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: transform 0.15s, border-color 0.15s;
+}
+.ts-color-dot:hover { transform: scale(1.15); }
+.ts-color-dot.active { border-color: var(--gray-300); transform: scale(1.15); }
+
+/* Hex input row */
+.ts-hex-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; border-radius: 8px;
+  border: 1.5px solid var(--border-base); background: var(--bg-subtle);
+}
+.ts-hex-preview { width: 20px; height: 20px; border-radius: 5px; flex-shrink: 0; }
+.ts-hex-input {
+  flex: 1; border: none; background: transparent; font-size: 13px;
+  font-family: monospace; color: var(--gray-700); outline: none;
+}
+.ts-color-picker {
+  width: 24px; height: 24px; border: none; background: none;
+  padding: 0; cursor: pointer; border-radius: 4px; overflow: hidden;
+}
+.ts-hex-error { font-size: 11px; color: var(--error-base); margin-top: 2px; }
+
+/* ── Dark mode overrides ── */
+[data-theme="dark"] .ts-mode-card {
+  background: #1e293b; border-color: #2d3748; color: #94a3b8;
+}
+[data-theme="dark"] .ts-mode-card:hover { color: #e2e8f0; border-color: var(--brand-400); }
+[data-theme="dark"] .ts-mode-card.active {
+  background: #1e1b4b; border-color: var(--brand-500); color: var(--brand-300);
+}
+[data-theme="dark"] .ts-hex-row { background: #1e293b; border-color: #2d3748; }
+[data-theme="dark"] .ts-hex-input { color: #e2e8f0; }

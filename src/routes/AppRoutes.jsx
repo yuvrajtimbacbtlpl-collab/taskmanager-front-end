@@ -17,6 +17,7 @@ import RoleList from "../pages/roles/RoleList";
 import EditRolePermissions from "../pages/roles/EditRolePermissions";
 
 import PermissionManagement from "../pages/admin/PermissionManagement";
+import Timesheet from "../pages/dashboard/Timesheet";
 
 import Loader from "../components/Loader";
 
@@ -40,13 +41,13 @@ const AppRoutes = () => {
     return "Loading...";
   };
 
-if (loading) {
-  return (
-    <div className="page-loader-center">
-      <Loader text="Restoring session..." />
-    </div>
-  );
-}
+  if (loading) {
+    return (
+      <div className="page-loader-center">
+        <Loader text="Restoring session..." />
+      </div>
+    );
+  }
 
   return (
     <Routes>
@@ -129,6 +130,8 @@ if (loading) {
             </PermissionRoute>
           }
         />
+
+        <Route path="timesheet" element={<Timesheet />} />
 
         <Route path="*" element={<Navigate to="/dashboard" />} />
       </Route>

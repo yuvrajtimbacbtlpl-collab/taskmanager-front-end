@@ -3,9 +3,19 @@ import { useAuth } from "../context/AuthContext";
 import { useEffect, useState } from "react";
 import { useGlobalSocket } from "../context/GlobalSocketProvider";
 import {
-  LayoutDashboard, Users, FolderKanban, CheckSquare,
-  AlertCircle, FileText, UsersRound, Shield, KeyRound,
-  ListChecks, Building2, MessageSquare,
+  LayoutDashboard,
+  Users,
+  FolderKanban,
+  CheckSquare,
+  AlertCircle,
+  FileText,
+  UsersRound,
+  Shield,
+  KeyRound,
+  ListChecks,
+  Building2,
+  MessageSquare,
+  Timer,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -37,8 +47,17 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="sidebar-logo-row">
         <div className="sidebar-logo-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="white"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
           </svg>
         </div>
         <div>
@@ -101,12 +120,23 @@ export default function Sidebar() {
           </NavLink>
         )}
 
-        <NavLink to="/dashboard/chat" className={linkClass} onClick={handleChatClick}>
+        <NavLink
+          to="/dashboard/chat"
+          className={linkClass}
+          onClick={handleChatClick}
+        >
           <MessageSquare size={16} className="icon" />
           <span>Chat</span>
           {chatUnread > 0 && (
-            <span className="chat-nav-badge">{chatUnread > 99 ? "99+" : chatUnread}</span>
+            <span className="chat-nav-badge">
+              {chatUnread > 99 ? "99+" : chatUnread}
+            </span>
           )}
+        </NavLink>
+
+        <NavLink to="/dashboard/timesheet" className={linkClass}>
+          <Timer size={16} className="icon" />
+          <span>Timesheet</span>
         </NavLink>
 
         {hasFeatureAccess("team") && (

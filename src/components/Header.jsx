@@ -1,8 +1,14 @@
-// src/components/Header.jsx
+// src/components/Header.jsx  — UPDATED (dark mode toggle added)
+// Changes from original:
+//   1. Imported ThemeToggle component
+//   2. Added <ThemeToggle /> inside .profile-area (before NotificationBell)
+//   All other logic is 100% identical to original.
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import ProfileModal from "./ProfileModal";
 import ConfirmDelete from "./ConfirmDelete";
 import NotificationBell from "./NotificationBell";
+import ThemeToggle from "./ThemeToggle"; // ✅ NEW
 import { api } from "../api";
 import { useProject } from "../context/ProjectContext";
 import socketService from "../services/socketService";
@@ -47,7 +53,6 @@ export default function Header({ role, user, onLogout }) {
       const data = await api("/company");
       const list = Array.isArray(data) ? data : [];
       setCompanies(list);
-      // Auto-select Global on first load if nothing selected
       if (!selectedCompany) {
         setSelectedCompany(GLOBAL_COMPANY);
       }
@@ -62,8 +67,6 @@ export default function Header({ role, user, onLogout }) {
       let url = "/projects";
       if (isAdmin) {
         if (isGlobal) {
-          // Global: show all projects (no company filter)
-          // Or show none — projects must belong to a company, global doesn't apply
           setProjects([]);
           setSelectedProject(null);
           return;
@@ -145,7 +148,6 @@ export default function Header({ role, user, onLogout }) {
                   <div className="project-dropdown-header">Select Scope</div>
 
                   <div className="project-dropdown-list">
-                    {/* ── GLOBAL OPTION ── */}
                     <div
                       className={`project-dropdown-item ${isGlobal ? "active" : ""}`}
                       onClick={(e) => { e.stopPropagation(); handleCompanySelect(GLOBAL_COMPANY); }}
@@ -163,7 +165,6 @@ export default function Header({ role, user, onLogout }) {
                       {isGlobal && <span className="project-check">✓</span>}
                     </div>
 
-                    {/* ── COMPANY LIST ── */}
                     {companies.length === 0 && (
                       <div className="project-empty">No companies found</div>
                     )}
@@ -182,7 +183,6 @@ export default function Header({ role, user, onLogout }) {
                     })}
                   </div>
 
-                  {/* ── SELECTED INFO BOX ── */}
                   {isGlobal ? (
                     <>
                       <div className="project-divider" />
@@ -294,6 +294,9 @@ export default function Header({ role, user, onLogout }) {
               )}
             </div>
           )}
+
+          {/* ✅ DARK MODE TOGGLE — added here, before notification bell */}
+          <ThemeToggle />
 
           {/* ── NOTIFICATION BELL ── */}
           <NotificationBell />

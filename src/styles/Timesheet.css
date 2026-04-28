@@ -1,0 +1,159 @@
+/* src/styles/Timesheet.css */
+
+.timesheet-page { padding: 0; animation: fadeInUp 0.26s ease both; }
+@keyframes fadeInUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+/* ── Header ── */
+.ts-page-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 16px; margin-bottom: 20px; flex-wrap: wrap;
+}
+.ts-header-left { display: flex; align-items: center; gap: 12px; color: var(--gray-500,#64748b); }
+.ts-header-left h2 { font-size: 21px; font-weight: 800; color: #0f172a; margin: 0 0 2px; letter-spacing: -0.4px; }
+.ts-header-left p  { margin: 0; font-size: 13px; color: #64748b; }
+.ts-header-right   { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+/* View toggle */
+.ts-view-toggle { display: flex; background: #f1f5f9; border-radius: 8px; padding: 2px; }
+.ts-toggle-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 6px 14px; border-radius: 7px; border: none; background: none;
+  font-size: 12.5px; font-weight: 600; color: #64748b; cursor: pointer;
+  transition: all 0.15s; font-family: inherit;
+}
+.ts-toggle-btn.active { background: #fff; color: #4f46e5; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+
+.ts-export-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 9px; border: 1.5px solid #e2e8f0;
+  background: #fff; color: #475569; font-size: 12.5px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s; font-family: inherit;
+}
+.ts-export-btn:hover:not(:disabled) { border-color: #6366f1; color: #4f46e5; background: #eef2ff; }
+.ts-export-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Week navigator ── */
+.ts-week-nav {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 18px; flex-wrap: wrap;
+}
+.ts-nav-btn {
+  width: 32px; height: 32px; border-radius: 8px;
+  border: 1.5px solid #e2e8f0; background: #fff; color: #64748b;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.15s;
+}
+.ts-nav-btn:hover { border-color: #6366f1; color: #4f46e5; background: #eef2ff; }
+.ts-week-label { font-size: 14px; font-weight: 700; color: #1e293b; min-width: 200px; text-align: center; }
+.ts-today-btn {
+  padding: 6px 14px; border-radius: 8px; border: 1.5px solid #e2e8f0;
+  background: #fff; font-size: 12px; font-weight: 600; color: #64748b;
+  cursor: pointer; transition: all 0.15s; font-family: inherit;
+}
+.ts-today-btn:hover { border-color: #6366f1; color: #4f46e5; }
+.ts-total-badge {
+  display: flex; align-items: center; gap: 5px; margin-left: auto;
+  background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 20px;
+  padding: 4px 12px; font-size: 12.5px; font-weight: 700; color: #4f46e5;
+}
+
+.ts-loading { text-align: center; padding: 60px; color: #94a3b8; font-size: 14px; }
+
+/* ── Team summary chips ── */
+.ts-team-summary {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px;
+}
+.ts-team-card {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px; border-radius: 12px;
+  border: 1.5px solid #e2e8f0; background: #fff;
+  cursor: pointer; transition: all 0.15s;
+}
+.ts-team-card:hover { border-color: #c7d2fe; background: #eef2ff; }
+.ts-team-card.active { border-color: #6366f1; background: #eef2ff; }
+.ts-team-avatar {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: linear-gradient(135deg,#6366f1,#8b5cf6);
+  color: #fff; font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.ts-team-name { font-size: 13px; font-weight: 600; color: #1e293b; }
+.ts-team-time { font-size: 12px; font-weight: 700; color: #4f46e5; background: #e0e7ff; padding: 2px 8px; border-radius: 20px; }
+
+/* ── Calendar 7-column grid ── */
+.ts-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-bottom: 24px;
+}
+@media (max-width: 900px) { .ts-calendar { grid-template-columns: repeat(4,1fr); } }
+@media (max-width: 600px) { .ts-calendar { grid-template-columns: repeat(2,1fr); } }
+
+.ts-day-col {
+  border-radius: 12px; border: 1.5px solid #e2e8f0; background: #fff;
+  overflow: hidden; min-height: 140px;
+}
+.ts-day-col.today { border-color: #6366f1; }
+.ts-day-col.empty { opacity: 0.7; }
+
+.ts-day-header {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 10px 8px 8px; background: #f8fafc; border-bottom: 1px solid #f1f5f9;
+  gap: 2px;
+}
+.ts-day-col.today .ts-day-header { background: #eef2ff; }
+.ts-day-name { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #94a3b8; }
+.ts-day-date { font-size: 13px; font-weight: 700; color: #1e293b; }
+.ts-day-total {
+  font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px;
+  background: #dcfce7; color: #15803d; margin-top: 2px;
+}
+
+.ts-day-logs { padding: 8px 6px; display: flex; flex-direction: column; gap: 5px; }
+.ts-day-empty { text-align: center; color: #cbd5e1; font-size: 18px; padding: 12px 0; }
+
+.ts-log-entry {
+  border-radius: 8px; padding: 7px 9px;
+  background: #f0fdf4; border: 1px solid #bbf7d0;
+}
+.ts-log-task  { font-size: 11.5px; font-weight: 700; color: #15803d; line-height: 1.3; }
+.ts-log-user  { font-size: 10.5px; color: #64748b; margin-top: 1px; }
+.ts-log-times { font-size: 10.5px; color: #94a3b8; margin-top: 2px; font-family: monospace; }
+.ts-log-dur   { font-size: 11.5px; font-weight: 700; color: #1e293b; margin-top: 2px; }
+.ts-log-note  { font-size: 10px; color: #94a3b8; font-style: italic; margin-top: 2px; }
+
+/* ── No data ── */
+.ts-no-data {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 60px 20px; text-align: center; color: #94a3b8; gap: 10px;
+}
+.ts-no-data p    { font-size: 16px; font-weight: 600; color: #1e293b; margin: 0; }
+.ts-no-data span { font-size: 13px; }
+
+/* ── Dark mode ── */
+[data-theme="dark"] .ts-header-left h2  { color: #f1f5f9; }
+[data-theme="dark"] .ts-header-left p   { color: #64748b; }
+[data-theme="dark"] .ts-week-label      { color: #e2e8f0; }
+[data-theme="dark"] .ts-nav-btn,
+[data-theme="dark"] .ts-today-btn,
+[data-theme="dark"] .ts-export-btn      { background: #1e293b; border-color: #2a3d52; color: #94a3b8; }
+[data-theme="dark"] .ts-nav-btn:hover,
+[data-theme="dark"] .ts-today-btn:hover,
+[data-theme="dark"] .ts-export-btn:hover:not(:disabled) { border-color: var(--brand-500); color: var(--brand-400); background: #1a1f3a; }
+[data-theme="dark"] .ts-total-badge     { background: #1a1f3a; border-color: #3730a3; color: #a5b4fc; }
+[data-theme="dark"] .ts-view-toggle     { background: #162032; }
+[data-theme="dark"] .ts-toggle-btn.active { background: #1e293b; color: var(--brand-400); }
+[data-theme="dark"] .ts-team-card       { background: #1e293b; border-color: #2a3d52; }
+[data-theme="dark"] .ts-team-card.active{ border-color: var(--brand-500); background: #1a1f3a; }
+[data-theme="dark"] .ts-team-name       { color: #e2e8f0; }
+[data-theme="dark"] .ts-day-col         { background: #1e293b; border-color: #2a3d52; }
+[data-theme="dark"] .ts-day-col.today   { border-color: var(--brand-500); }
+[data-theme="dark"] .ts-day-header      { background: #162032; border-bottom-color: #2a3d52; }
+[data-theme="dark"] .ts-day-col.today .ts-day-header { background: #1a1f3a; }
+[data-theme="dark"] .ts-day-date        { color: #e2e8f0; }
+[data-theme="dark"] .ts-day-total       { background: #052e16; color: #4ade80; }
+[data-theme="dark"] .ts-log-entry       { background: #0a2014; border-color: #064e1a; }
+[data-theme="dark"] .ts-log-task        { color: #4ade80; }
+[data-theme="dark"] .ts-log-dur         { color: #e2e8f0; }
+[data-theme="dark"] .ts-no-data p       { color: #e2e8f0; }
